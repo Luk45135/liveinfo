@@ -36,6 +36,7 @@
   };
   users.users.nixos = {
     isNormalUser = true;
+    password = "";
     shell = pkgs.zsh;
     extraGroups = [
       "wheel"
