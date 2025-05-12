@@ -1,4 +1,7 @@
 {pkgs, ...}: {
+  imports = [
+    ./modules/fetch.nix
+  ];
 
   services = {
     printing.enable = true;
@@ -16,30 +19,45 @@
     xserver = {
       enable = true;
       xkb.layout = "ch";
-      displayManager.lightdm = {
-        enable = true;
+      displayManager = {
         autoLogin = {
           enable = true;
           user = "nixos";
         };
+        lightdm.enable = true;
       };
-      desktopManager.mate.enable = true;
+      desktopManager.cinnamon.enable = true;
     };
   };
 
   networking = {
-    wireless.enable = true;
+    networkmanager.enable = true;
+    wireless.enable = false;
   };
+  users.users.nixos = {
+    isNormalUser = true;
+    shell = pkgs.zsh;
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+    ];
+  };
+  programs.zsh.enable = true;
 
   environment.systemPackages = with pkgs; [
     alacritty
     tmux
     neovim
     firefox
+
     dmidecode
     fastfetch
     pciutils
+    glxinfo
+    smartmontools
     ripgrep
+    furmark
+
     libsForQt5.okular
     typst
   ];
@@ -50,5 +68,9 @@
     packages = with pkgs; [
       fira-code-nerdfont
     ];
+    fontconfig = {
+      enable = true;
+      defaultFonts.monospace = ["FiraCode Nerd Font Mono"];
+    };
   };
 }
