@@ -63,6 +63,7 @@
     typst
   ];
 
+  nixpkgs.config.allowUnfree = true;
   
   fonts = {
     enableDefaultPackages = true;
