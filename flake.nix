@@ -29,13 +29,12 @@
         smartmontools
         ripgrep
         # furmark
-        hardinfo2
-        cpu-x
         clinfo
         sysbench
         glmark2
 
         python3
+        python3Packages.humanfriendly
       ];
     };
   };
