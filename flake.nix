@@ -16,5 +16,27 @@
         ];
       };
     };
+    devShells.x86_64-linux.default = let
+      pkgs = import nixpkgs {
+        system = "x86_64-linux";
+      };
+    in pkgs.mkShell {
+      buildInputs = with pkgs; [
+        dmidecode
+        fastfetch
+        pciutils
+        glxinfo
+        smartmontools
+        ripgrep
+        # furmark
+        hardinfo2
+        cpu-x
+        clinfo
+        sysbench
+        glmark2
+
+        python3
+      ];
+    };
   };
 }
