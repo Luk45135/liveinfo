@@ -57,6 +57,11 @@
     smartmontools
     ripgrep
     furmark
+    hardinfo2
+    cpu-x
+    clinfo
+    sysbench
+    glmark2
 
     libsForQt5.okular
     typst
