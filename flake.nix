@@ -31,6 +31,7 @@
         clinfo
         sysbench
         glmark2
+        f3
 
         python3
         python3Packages.humanfriendly
