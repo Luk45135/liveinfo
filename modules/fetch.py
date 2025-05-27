@@ -1,6 +1,8 @@
 import subprocess
 import shlex
 from csv import writer
+import json
+from dataclasses import dataclass
 import humanfriendly
 
 
@@ -13,32 +15,72 @@ def run(cmd: str, shell: bool = False) -> str:
     )
     return result.stdout.strip()
 
+@dataclass
+class Disk:
+    disk_type: str # SDD / HDD
+    size_str: str # 931.5G or 1.00TB depending on if f3 is used
+    size_bytes: float # parsed disk size used for sorting
+    model: str
+    power_on_hours: str
+    # written_data: str
+    # read_speed: str
+    # write_speed: str
+    # smart_status: str
 
 def get_disks():
     # Run lsblk and get raw output
-    result = run("lsblk -d -o NAME,ROTA,TYPE,SIZE,MODEL --noheading")
+    lsblk_json = json.loads(run("lsblk -d -o PATH,ROTA,TYPE,SIZE,TRAN,MODEL --noheading -J"))
 
     disks = []
 
-    for line in result.strip().splitlines():
-        parts = line.split(None, 4)  # Split into max 4 parts
-        if len(parts) < 5 or parts[2] != "disk":
-            continue  # Skip if not a full line or not a disk
-        name, rota, _type, size_str, model = parts
-        path = f"/dev/{name}"
+    for device in lsblk_json.get("blockdevices", []):
+        if device["type"] != "disk":
+            continue # Skip if it isnt a disk
+        if device.get("tran") == "usb":
+            continue # Skip if it's attached via USB
 
-        bus_info = run(f"udevadm info --query=property --name={path}")
-        if "ID_BUS=usb" in bus_info: # If the disk is a USB stick dont include it in the list
-            continue
+        
 
-        size_parsed = humanfriendly.parse_size(size_str)
 
-        disk_type = "SSD" if rota == "0" else "HDD"
+        if device.get("tran") == "nvme":
+            power_on_hours = run(f"sudo smartctl --all {device.get("path")} | awk -F: '/Power On Hours/ {{print $2}}'".strip(), shell=True) + "h"
+        else:
+            power_on_hours= run(f"sudo smartctl --all {device.get("path")} | awk '/Power_On_Hours/ {{for (i=1; i<NF; i++) if ($i == \"-\") print $(i+1)}}'", shell=True) + "h"
 
-        disks.append((size_parsed, [disk_type, size_str, model, path]))
+        disks.append(Disk(
+            disk_type = "SSD" if not device.get("rota") else "HDD",
+            size_str = device.get("size"),
+            # size_str = run(f"sudo f3probe {disk[3]} | awk -F: '/Module/ {{gsub(/^ +| +$/, \"\", $2); split($2, a, \" \"); print a[1], a[2]}}'", shell=True),
+            size_bytes = humanfriendly.parse_size(device.get("size")),
+            model = device.get("model", "Unknown"),
+            power_on_hours = power_on_hours,
+            # written_data = written_data,
+            # read_speed = read_speed,
+            # write_speed = write_speed,
+            # smart_status = smart_status
+        ))
+
+    return sorted(disks, key=lambda d: (d.disk_type != "SSD", -d.size_bytes))
+
+    # for line in lsblk_out.strip().splitlines():
+    #     parts = line.split(None, 5)  # Split into max 4 parts
+    #     if len(parts) < 6 or parts[2] != "disk":
+    #         continue  # Skip if not a full line or not a disk
+    #     path, rota, _type, size_str, model, tran = parts
+    #
+    #
+    #     print(tran)
+    #     if tran == "usb": # If the disk is attached via USB dont include it in the list
+    #         continue
+    #
+    #     size_parsed = humanfriendly.parse_size(size_str)
+    #
+    #     disk_type = "SSD" if rota == "0" else "HDD"
+
+        # disks.append((size_parsed, [disk_type, size_str, model, path, tran]))
 
     # Sort using size_gb (from tuple[0]), then discard it
-    return [entry for _, entry in sorted(disks, key=lambda x: (x[1][0] != "SSD", -x[0]))]
+    # return [entry for _, entry in sorted(disks, key=lambda x: (x[1][0] != "SSD", -x[0]))]
 
 
 # List that will become csv
@@ -76,11 +118,13 @@ csv.append(["Grafikkarte", f"{gpu} {gpu_mem} {gpu_clock}".strip()]) # strip beca
 
 # Disks
 for disk in get_disks():
-    csv.append([disk[0], disk[2]]) # SSD/HDD Modellname
-    csv.append(["Grösse", disk[1]])
-
-
-
+    csv.append([disk.disk_type, disk.model])
+    csv.append(["Grösse", disk.size_str])
+    csv.append(["Betriebsstunden", disk.power_on_hours])
+    # csv.append(["Geschriebene Daten", disk.written_data])
+    # csv.append(["Lesegeschwindigkeit", disk.read_speed])
+    # csv.append(["Schreibgeschwindigkeit", disk.write_speed])
+    # csv.append(["SMART-Status", disk.smart_status])
 
 
 
