@@ -28,13 +28,13 @@
         glxinfo
         smartmontools
         ripgrep
-        # furmark
         clinfo
         sysbench
         glmark2
 
         python3
         python3Packages.humanfriendly
+        typst
       ];
     };
   };
