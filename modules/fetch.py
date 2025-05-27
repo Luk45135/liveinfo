@@ -62,26 +62,6 @@ def get_disks():
 
     return sorted(disks, key=lambda d: (d.disk_type != "SSD", -d.size_bytes))
 
-    # for line in lsblk_out.strip().splitlines():
-    #     parts = line.split(None, 5)  # Split into max 4 parts
-    #     if len(parts) < 6 or parts[2] != "disk":
-    #         continue  # Skip if not a full line or not a disk
-    #     path, rota, _type, size_str, model, tran = parts
-    #
-    #
-    #     print(tran)
-    #     if tran == "usb": # If the disk is attached via USB dont include it in the list
-    #         continue
-    #
-    #     size_parsed = humanfriendly.parse_size(size_str)
-    #
-    #     disk_type = "SSD" if rota == "0" else "HDD"
-
-        # disks.append((size_parsed, [disk_type, size_str, model, path, tran]))
-
-    # Sort using size_gb (from tuple[0]), then discard it
-    # return [entry for _, entry in sorted(disks, key=lambda x: (x[1][0] != "SSD", -x[0]))]
-
 
 # List that will become csv
 csv = []
