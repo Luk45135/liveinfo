@@ -49,16 +49,16 @@ ff = "fastfetch --logo none --key-type none " # ending space to make following c
 
 # Host
 host = run(ff + "--structure host")
-csv.append(["Host", host])
+csv.append(["Modell", host])
 
 # CPU
 cpu = run(ff + "--structure cpu --cpu-format '{1} ({3}c/{4}t) @ {7}'")
 arch = run("getconf LONG_BIT") + "-bit"
-csv.append(["CPU", f"{cpu} {arch}"])
+csv.append(["Prozessor", f"{cpu} {arch}"])
 
 # Boot Manager
 bootmgr = run(ff + "--structure bootmgr --bootmgr-format '{1}'")
-csv.append(["Boot Manager", bootmgr])
+csv.append(["UEFI/Legacy", bootmgr])
 
 # TPM?
 tpm = run(ff + "--structure tpm")
@@ -66,18 +66,18 @@ csv.append(["TPM", tpm])
 
 # Memory
 memory = run("lsmem | awk '/Total online memory:/ {print $4}'", shell=True)
-csv.append(["Memory", memory])
+csv.append(["Arbeitsspeicher", memory])
 
 # GPU
 gpu = run(ff + "--structure gpu --gpu-format '{2}'")
 gpu_mem = run("glxinfo -B | awk -F: '/Dedicated video memory/ { print $2 }'", shell=True)
 gpu_clock = run("clinfo --prop CL_DEVICE_MAX_CLOCK_FREQUENCY | awk '{print $NF}'", shell=True).strip() + " MHz" # only works if gpu supports opencl
-csv.append(["GPU", f"{gpu} {gpu_mem} {gpu_clock}".strip()]) # strip because gpu_mem or gpu_clock might not work
+csv.append(["Grafikkarte", f"{gpu} {gpu_mem} {gpu_clock}".strip()]) # strip because gpu_mem or gpu_clock might not work
 
 # Disks
 for disk in get_disks():
     csv.append([disk[0], disk[2]]) # SSD/HDD Modellname
-    csv.append(["Size", disk[1]])
+    csv.append(["Grösse", disk[1]])
 
 
 
