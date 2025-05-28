@@ -25,7 +25,7 @@ class Disk:
     written_data: str
     # read_speed: str
     # write_speed: str
-    # smart_status: str
+    smart_status: str
 
 def get_disks():
     # Run lsblk and get raw output
@@ -68,6 +68,8 @@ def get_disks():
         written_data = str(round(written_data)) + " GiB"
 
 
+        smart_status = "PASSED" if smartctl_json.get("smart_status").get("passed") else "FAILED"
+
         disks.append(Disk(
             disk_type = disk_type,
             size_str = device.get("size"),
@@ -78,7 +80,7 @@ def get_disks():
             written_data = written_data,
             # read_speed = read_speed,
             # write_speed = write_speed,
-            # smart_status = smart_status
+            smart_status = smart_status
         ))
 
     return sorted(disks, key=lambda d: (d.disk_type != "SSD", -d.size_bytes))
@@ -125,7 +127,7 @@ for disk in get_disks():
     csv.append(["Geschriebene Daten", disk.written_data])
     # csv.append(["Lesegeschwindigkeit", disk.read_speed])
     # csv.append(["Schreibgeschwindigkeit", disk.write_speed])
-    # csv.append(["SMART-Status", disk.smart_status])
+    csv.append(["SMART-Status", disk.smart_status])
 
 
 
