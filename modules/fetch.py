@@ -39,16 +39,15 @@ def get_disks():
         if device.get("tran") == "usb":
             continue # Skip if it's attached via USB
 
+        path = device.get("path") # Get disk path like /dev/sda
+        disk_type = "HDD" if device.get("rota") else "SSD" # If it's a ROTAting disk its a HDD else its a SSD
 
-        path = device.get("path")
-        disk_type = "SSD" if not device.get("rota") else "HDD"
+        smartctl_json = json.loads(run(f"sudo smartctl -a -j {path}")) # Get SMART info for disk
 
-        smartctl_json = json.loads(run(f"sudo smartctl -a -j {path}"))
+        logical_block_size = smartctl_json.get("logical_block_size", 512) # Used for calculating total disk writes
+        power_on_hours = str(smartctl_json.get("power_on_time", {}).get("hours")) + "h" # This is the same on nvme ssd, sata ssd and sata hdd
 
-        logical_block_size = smartctl_json.get("logical_block_size", 512)
-        power_on_hours = smartctl_json.get("power_on_time")
-
-        written_data = 0
+        written_data = 0 # Initialize var for later
 
         if device.get("tran") == "nvme":
             raw_written_value = smartctl_json.get("nvme_smart_health_information_log", {}).get("data_units_written")
@@ -68,12 +67,6 @@ def get_disks():
 
         written_data = str(round(written_data)) + " GiB"
 
-
-
-        if device.get("tran") == "nvme":
-            power_on_hours = run(f"sudo smartctl --all {path} | awk -F: '/Power On Hours/ {{print $2}}'".strip(), shell=True) + "h"
-        else:
-            power_on_hours= run(f"sudo smartctl --all {path} | awk '/Power_On_Hours/ {{for (i=1; i<NF; i++) if ($i == \"-\") print $(i+1)}}'", shell=True) + "h"
 
         disks.append(Disk(
             disk_type = disk_type,
