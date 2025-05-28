@@ -22,7 +22,7 @@ class Disk:
     size_bytes: float # parsed disk size used for sorting
     model: str
     power_on_hours: str
-    # written_data: str
+    written_data: str
     # read_speed: str
     # write_speed: str
     # smart_status: str
@@ -39,22 +39,50 @@ def get_disks():
         if device.get("tran") == "usb":
             continue # Skip if it's attached via USB
 
-        
+
+        path = device.get("path")
+        disk_type = "SSD" if not device.get("rota") else "HDD"
+
+        smartctl_json = json.loads(run(f"sudo smartctl -a -j {path}"))
+
+        logical_block_size = smartctl_json.get("logical_block_size", 512)
+        power_on_hours = smartctl_json.get("power_on_time")
+
+        written_data = 0
+
+        if device.get("tran") == "nvme":
+            raw_written_value = smartctl_json.get("nvme_smart_health_information_log", {}).get("data_units_written")
+            written_data = (raw_written_value * (logical_block_size * 1000)) / (1024 ** 3)
+        elif device.get("tran") == "sata":
+            raw_written_value = 0
+            # print(smartctl_json.get("ata_smart_attributes"))
+            for entry in smartctl_json.get("ata_smart_attributes", {}).get("table", []):
+                if entry.get("id") == 241:
+                    raw_written_value = entry.get("raw", {}).get("value")
+                    # print(raw_written_value)
+                    break
+            if disk_type == "SSD":
+                written_data = raw_written_value
+            else:
+                written_data = (raw_written_value * logical_block_size) / (1024 ** 3)
+
+        written_data = str(round(written_data)) + " GiB"
+
 
 
         if device.get("tran") == "nvme":
-            power_on_hours = run(f"sudo smartctl --all {device.get("path")} | awk -F: '/Power On Hours/ {{print $2}}'".strip(), shell=True) + "h"
+            power_on_hours = run(f"sudo smartctl --all {path} | awk -F: '/Power On Hours/ {{print $2}}'".strip(), shell=True) + "h"
         else:
-            power_on_hours= run(f"sudo smartctl --all {device.get("path")} | awk '/Power_On_Hours/ {{for (i=1; i<NF; i++) if ($i == \"-\") print $(i+1)}}'", shell=True) + "h"
+            power_on_hours= run(f"sudo smartctl --all {path} | awk '/Power_On_Hours/ {{for (i=1; i<NF; i++) if ($i == \"-\") print $(i+1)}}'", shell=True) + "h"
 
         disks.append(Disk(
-            disk_type = "SSD" if not device.get("rota") else "HDD",
+            disk_type = disk_type,
             size_str = device.get("size"),
             # size_str = run(f"sudo f3probe {disk[3]} | awk -F: '/Module/ {{gsub(/^ +| +$/, \"\", $2); split($2, a, \" \"); print a[1], a[2]}}'", shell=True),
             size_bytes = humanfriendly.parse_size(device.get("size")),
             model = device.get("model", "Unknown"),
             power_on_hours = power_on_hours,
-            # written_data = written_data,
+            written_data = written_data,
             # read_speed = read_speed,
             # write_speed = write_speed,
             # smart_status = smart_status
@@ -101,7 +129,7 @@ for disk in get_disks():
     csv.append([disk.disk_type, disk.model])
     csv.append(["Grösse", disk.size_str])
     csv.append(["Betriebsstunden", disk.power_on_hours])
-    # csv.append(["Geschriebene Daten", disk.written_data])
+    csv.append(["Geschriebene Daten", disk.written_data])
     # csv.append(["Lesegeschwindigkeit", disk.read_speed])
     # csv.append(["Schreibgeschwindigkeit", disk.write_speed])
     # csv.append(["SMART-Status", disk.smart_status])
@@ -112,11 +140,10 @@ with open("system_info.csv", "w", newline="") as csvfile:
     csv_writer = writer(csvfile)
     csv_writer.writerows(csv)
 
-# run("okular system_info.csv")
     
 print(csv)
 
-# print(get_disks())
-
+run("typst compile testprotokoll.typ info.pdf")
+run("okular info.pdf")
 
 
