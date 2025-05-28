@@ -30,6 +30,8 @@
     };
   };
 
+  hardware.enableAllFirmware = true;
+
   networking = {
     networkmanager.enable = true;
     wireless.enable = false;
