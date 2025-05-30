@@ -32,6 +32,8 @@
 #show heading: set text(blue, 26pt)
 = Testprotokoll PC und Apple
 
+#show heading: set text(black, 16pt)
+== Systeminformationen:
 #let info = csv("system_info.csv")
 
 #table(
@@ -41,3 +43,12 @@
   ..info.flatten(),
 )
 
+== Speichergerät\(e\):
+#let disks = csv("disks.csv")
+
+#table(
+  columns: (auto, 1fr),
+  inset: 10pt,
+  align: horizon,
+  ..disks.flatten(),
+)

@@ -6,6 +6,9 @@ from dataclasses import dataclass
 import humanfriendly
 
 
+
+
+
 def run(cmd: str, shell: bool = False) -> str:
     result = subprocess.run(
         cmd if shell else shlex.split(cmd),
@@ -71,6 +74,7 @@ def get_disks():
                     break
             if disk_type == "SSD":
                 written_data = raw_written_value # SATA SSDs store this in GB
+
                 fio_runtime = 10
             else:
                 written_data = (raw_written_value * logical_block_size) / (1024 ** 3) # Other disks store it as logical block sizes written
@@ -101,57 +105,73 @@ def get_disks():
     return sorted(disks, key=lambda d: (d.disk_type != "SSD", -d.size_bytes))
 
 
-# List that will become csv
-csv = []
+# List that will become system_info.csv
+sys = [
+    ["Preissegment", "☐ Hobby   ☐ Klein   ☐ Mittel   ☐ Gross"],
+    ["Hersteller", ""]
+]
 
 # Fastfetch default settings
 ff = "fastfetch --logo none --key-type none " # ending space to make following commands cleaner
 
 # Host
 host = run(ff + "--structure host")
-csv.append(["Modell", host])
+sys.append(["Modell", host])
 
 # CPU
 cpu = run(ff + "--structure cpu --cpu-format '{1} ({3}c/{4}t) @ {7}'")
 arch = run("getconf LONG_BIT") + "-bit"
-csv.append(["Prozessor", f"{cpu} {arch}"])
+sys.append(["Prozessor", f"{cpu} {arch}"])
 
 # Boot Manager
 bootmgr = run(ff + "--structure bootmgr --bootmgr-format '{1}'")
-csv.append(["UEFI/Legacy", bootmgr])
+sys.append(["UEFI/Legacy", bootmgr])
 
 # TPM?
 tpm = run(ff + "--structure tpm")
-csv.append(["TPM", tpm])
+sys.append(["TPM", tpm])
 
 # Memory
 memory = run("lsmem | awk '/Total online memory:/ {print $4}'", shell=True)
-csv.append(["Arbeitsspeicher", memory])
+sys.append(["Arbeitsspeicher", memory])
 
 # GPU
 gpu = run(ff + "--structure gpu --gpu-format '{2}'")
 gpu_mem = run("glxinfo -B | awk -F: '/Dedicated video memory/ { print $2 }'", shell=True)
 gpu_clock = run("clinfo --prop CL_DEVICE_MAX_CLOCK_FREQUENCY | awk '{print $NF}'", shell=True).strip() + " MHz" # only works if gpu supports opencl
-csv.append(["Grafikkarte", f"{gpu} {gpu_mem} {gpu_clock}".strip()]) # strip because gpu_mem or gpu_clock might not work
-
-# Disks
-for disk in get_disks():
-    csv.append([disk.disk_type, disk.model])
-    csv.append(["Grösse", disk.size_str])
-    csv.append(["Betriebsstunden", disk.power_on_hours])
-    csv.append(["Geschriebene Daten", disk.written_data])
-    # csv.append(["Lesegeschwindigkeit", disk.read_speed])
-    # csv.append(["Schreibgeschwindigkeit", disk.write_speed])
-    csv.append(["SMART-Status", disk.smart_status])
-
+sys.append(["Grafikkarte", f"{gpu} {gpu_mem} {gpu_clock}".strip()]) # strip because gpu_mem or gpu_clock might not work
 
 
 with open("system_info.csv", "w", newline="") as csvfile:
     csv_writer = writer(csvfile)
-    csv_writer.writerows(csv)
+    csv_writer.writerows(sys)
+    print("Written general info")
+# print(sys)
+
+
+
+# List that will become disks.csv
+disks = []
+
+# Disks
+for disk in get_disks():
+    disks.append([disk.disk_type, disk.model])
+    disks.append(["Grösse", disk.size_str])
+    disks.append(["Betriebsstunden", disk.power_on_hours])
+    disks.append(["Geschriebene Daten", disk.written_data])
+    disks.append(["Lesegeschwindigkeit", disk.read_speed])
+    # disks.append(["Schreibgeschwindigkeit", disk.write_speed])
+    disks.append(["SMART-Status", disk.smart_status])
+
+
+with open("disks.csv", "w", newline="") as csvfile:
+    csv_writer = writer(csvfile)
+    csv_writer.writerows(disks)
+    print("Written disk info")
+# print(disks)
+
 
     
-print(csv)
 
 run("typst compile testprotokoll.typ info.pdf")
 run("okular info.pdf")
