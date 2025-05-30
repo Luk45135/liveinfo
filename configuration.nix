@@ -52,21 +52,30 @@
     neovim
     firefox
 
+    # Tools for reading out systeminfo
     dmidecode
-    fastfetch
     pciutils
-    glxinfo
-    smartmontools
-    ripgrep
     furmark
     hardinfo2
     cpu-x
-    clinfo
     sysbench
     glmark2
+
+    # Other useful tools
+    gnome-disk-utility
+    gparted
+
+    # Needed for script
+    python3
+    python3Packages.humanfriendly
+    ## For infofetching
+    fastfetch
+    glxinfo
+    smartmontools
+    clinfo
     f3
     fio
-
+    ## For pdf stuff
     libsForQt5.okular
     typst
   ];

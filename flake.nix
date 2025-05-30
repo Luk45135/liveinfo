@@ -22,20 +22,18 @@
       };
     in pkgs.mkShell {
       buildInputs = with pkgs; [
-        dmidecode
-        fastfetch
-        pciutils
-        glxinfo
-        smartmontools
-        ripgrep
-        clinfo
-        sysbench
-        glmark2
-        f3
-        fio
-
+        # Needed for script
         python3
         python3Packages.humanfriendly
+        ## For infofetching
+        fastfetch
+        glxinfo
+        smartmontools
+        clinfo
+        f3
+        fio
+        ## For pdf stuff
+        libsForQt5.okular
         typst
       ];
     };
