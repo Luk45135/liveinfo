@@ -16,16 +16,14 @@
       pulse.enable = true;
     };
 
+    displayManager.autoLogin = {
+      enable = true;
+      user = "nixos";
+    };
     xserver = {
       enable = true;
       xkb.layout = "ch";
-      displayManager = {
-        autoLogin = {
-          enable = true;
-          user = "nixos";
-        };
-        lightdm.enable = true;
-      };
+      displayManager.lightdm.enable = true;
       desktopManager.cinnamon.enable = true;
     };
   };
