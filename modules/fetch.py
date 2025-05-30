@@ -20,7 +20,7 @@ def run(cmd: str, shell: bool = False) -> str:
         print(f"Command failed: {cmd}\n{result.stderr}")
     return result.stdout.strip()
 
-def get_fio_read_json(filename: str, runtime: int = 60, jobname: str = "read_test") -> dict:
+def get_fio_read_json(filename: str, runtime: int = 20, jobname: str = "read_test") -> dict:
     fio_read_json_cmd = f"sudo fio --direct=1 --rw=randread --bs=4k --ioengine=libaio --iodepth=256 --runtime={runtime} --numjobs=4 --time_based --group_reporting --eta-newline=1 --readonly --output-format=json --filename={filename} --name={jobname}"
     return json.loads(run(fio_read_json_cmd))
 
