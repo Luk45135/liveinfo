@@ -59,22 +59,21 @@ def get_disks():
 
         if device.get("tran") == "nvme":
             raw_written_value = smartctl_json.get("nvme_smart_health_information_log", {}).get("data_units_written")
-            written_data = (raw_written_value * (logical_block_size * 1000)) / (1024 ** 3)
+            written_data = (raw_written_value * (logical_block_size * 1000)) / (1024 ** 3) # NVMEs use 512'000 as block size
 
             fio_runtime = 5
         elif device.get("tran") == "sata":
             raw_written_value = 0
-            # print(smartctl_json.get("ata_smart_attributes"))
             for entry in smartctl_json.get("ata_smart_attributes", {}).get("table", []):
-                if entry.get("id") == 241:
+                if entry.get("id") == 241: # ID 241 stores info about total data written
                     raw_written_value = entry.get("raw", {}).get("value")
                     # print(raw_written_value)
                     break
             if disk_type == "SSD":
-                written_data = raw_written_value
+                written_data = raw_written_value # SATA SSDs store this in GB
                 fio_runtime = 10
             else:
-                written_data = (raw_written_value * logical_block_size) / (1024 ** 3)
+                written_data = (raw_written_value * logical_block_size) / (1024 ** 3) # Other disks store it as logical block sizes written
 
                 fio_runtime = 30
 
