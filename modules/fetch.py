@@ -171,9 +171,7 @@ with open("disks.csv", "w", newline="") as csvfile:
 # print(disks)
 
 
-    
+
 
 run("typst compile testprotokoll.typ info.pdf")
 run("okular info.pdf")
-
-
