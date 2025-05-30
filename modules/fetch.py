@@ -17,6 +17,11 @@ def run(cmd: str, shell: bool = False) -> str:
         print(f"Command failed: {cmd}\n{result.stderr}")
     return result.stdout.strip()
 
+def get_fio_read_json(filename: str, runtime: int = 60, jobname: str = "read_test") -> dict:
+    fio_read_json_cmd = f"sudo fio --direct=1 --rw=randread --bs=4k --ioengine=libaio --iodepth=256 --runtime={runtime} --numjobs=4 --time_based --group_reporting --eta-newline=1 --readonly --output-format=json --filename={filename} --name={jobname}"
+    return json.loads(run(fio_read_json_cmd))
+
+
 @dataclass
 class Disk:
     disk_type: str # SDD / HDD
@@ -25,7 +30,7 @@ class Disk:
     model: str
     power_on_hours: str
     written_data: str
-    # read_speed: str
+    read_speed: str
     # write_speed: str
     smart_status: str
 
@@ -50,10 +55,13 @@ def get_disks():
         power_on_hours = str(smartctl_json.get("power_on_time", {}).get("hours")) + "h" # This is the same on nvme ssd, sata ssd and sata hdd
 
         written_data = 0 # Initialize var for later
+        fio_runtime = 20 # Initialize var for later
 
         if device.get("tran") == "nvme":
             raw_written_value = smartctl_json.get("nvme_smart_health_information_log", {}).get("data_units_written")
             written_data = (raw_written_value * (logical_block_size * 1000)) / (1024 ** 3)
+
+            fio_runtime = 5
         elif device.get("tran") == "sata":
             raw_written_value = 0
             # print(smartctl_json.get("ata_smart_attributes"))
@@ -64,11 +72,17 @@ def get_disks():
                     break
             if disk_type == "SSD":
                 written_data = raw_written_value
+                fio_runtime = 10
             else:
                 written_data = (raw_written_value * logical_block_size) / (1024 ** 3)
 
+                fio_runtime = 30
+
         written_data = str(round(written_data)) + " GiB"
 
+        print(f"Testing the random read speed of: {device.get("model")} at {path}")
+        fio_job = get_fio_read_json(path, fio_runtime)["jobs"][0]
+        read_speed = str(round(fio_job.get("read", {}).get("bw") / 1024, 2)) + "MB/s" # bw = bandwidth in KB/s
 
         smart_status = "PASSED" if smartctl_json.get("smart_status").get("passed") else "FAILED"
 
@@ -80,7 +94,7 @@ def get_disks():
             model = device.get("model", "Unknown"),
             power_on_hours = power_on_hours,
             written_data = written_data,
-            # read_speed = read_speed,
+            read_speed = read_speed,
             # write_speed = write_speed,
             smart_status = smart_status
         ))
