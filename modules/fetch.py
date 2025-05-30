@@ -13,6 +13,8 @@ def run(cmd: str, shell: bool = False) -> str:
         text=True,
         shell=shell
     )
+    if result.returncode != 0:
+        print(f"Command failed: {cmd}\n{result.stderr}")
     return result.stdout.strip()
 
 @dataclass
