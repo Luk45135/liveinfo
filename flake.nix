@@ -32,6 +32,7 @@
         sysbench
         glmark2
         f3
+        fio
 
         python3
         python3Packages.humanfriendly

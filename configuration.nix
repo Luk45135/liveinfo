@@ -64,6 +64,8 @@
     clinfo
     sysbench
     glmark2
+    f3
+    fio
 
     libsForQt5.okular
     typst
