@@ -81,7 +81,7 @@ def get_disks():
 
                 fio_runtime = 30
 
-        written_data = str(round(written_data)) + " GiB"
+        written_data = str(round(written_data, 2)) + " GiB"
 
         print(f"Testing the random read speed of: {device.get("model")} at {path}")
         fio_job = get_fio_read_json(path, fio_runtime)["jobs"][0]
