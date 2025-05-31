@@ -83,11 +83,8 @@
   fonts = {
     enableDefaultPackages = true;
     packages = with pkgs; [
-      nerd-fonts.fira-code
+      noto-fonts
+      roboto
     ];
-    fontconfig = {
-      enable = true;
-      defaultFonts.monospace = ["FiraCode Nerd Font Mono"];
-    };
   };
 }
