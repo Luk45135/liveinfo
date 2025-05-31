@@ -49,7 +49,11 @@
       "networkmanager"
     ];
   };
-  programs.zsh.enable = true;
+  programs.zsh = {
+    enable = true;
+    autosuggestions.enable = true;
+    syntaxHighlighting.enable = true;
+  };
 
   environment.systemPackages = with pkgs; [
     alacritty
