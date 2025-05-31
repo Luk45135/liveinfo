@@ -64,8 +64,8 @@
     gparted
 
     # Needed for script
-    python3
-    python3Packages.humanfriendly
+    # python3
+    # python3Packages.humanfriendly
     ## For infofetching
     fastfetch
     glxinfo
