@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import os
+from pathlib import Path
 import subprocess
 import shlex
 from csv import writer
@@ -86,6 +88,7 @@ def get_disks():
         written_data = str(round(written_data, 2)) + " GiB"
 
         print(f"Testing the random read speed of: {device.get("model")} at {path}")
+        fio_runtime = 5 # for testing
         fio_job = get_fio_read_json(path, fio_runtime)["jobs"][0]
         read_speed = str(round(fio_job.get("read", {}).get("bw") / 1024, 2)) + "MB/s" # bw = bandwidth in KB/s
 
@@ -144,14 +147,6 @@ gpu_clock = run("clinfo --prop CL_DEVICE_MAX_CLOCK_FREQUENCY | awk '{print $NF}'
 sys.append(["Grafikkarte", f"{gpu} {gpu_mem} {gpu_clock}".strip()]) # strip because gpu_mem or gpu_clock might not work
 
 
-with open("system_info.csv", "w", newline="") as csvfile:
-    csv_writer = writer(csvfile)
-    csv_writer.writerows(sys)
-    print("Written general info")
-# print(sys)
-
-
-
 # List that will become disks.csv
 disks = []
 
@@ -166,14 +161,30 @@ for disk in get_disks():
     disks.append(["SMART-Status", disk.smart_status])
 
 
-with open("disks.csv", "w", newline="") as csvfile:
+
+
+asset_dir = Path(os.getenv("FETCHSCRIPT_SHARE", "/run/current-system/sw/share/fetchscript"))
+work_dir = Path.home() / "Documents" / "fetchscript"
+work_dir.mkdir(parents=True, exist_ok=True)
+
+for asset in asset_dir.iterdir():
+    target = work_dir / asset.name
+    if not target.exists():
+        print(f"Copying {asset.name} to {work_dir}")
+        target.write_bytes(asset.read_bytes())
+
+
+with open(work_dir / "system_info.csv", "w", newline="") as csvfile:
+    csv_writer = writer(csvfile)
+    csv_writer.writerows(sys)
+    print("Written general info")
+# print(sys)
+
+with open(work_dir / "disks.csv", "w", newline="") as csvfile:
     csv_writer = writer(csvfile)
     csv_writer.writerows(disks)
     print("Written disk info")
 # print(disks)
 
-
-
-
-run("typst compile testprotokoll.typ info.pdf")
-run("okular info.pdf")
+run(f"typst compile {work_dir}/testprotokoll.typ {work_dir}/info.pdf")
+run(f"okular {work_dir}/info.pdf")
