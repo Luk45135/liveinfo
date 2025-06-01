@@ -64,30 +64,32 @@ def get_disks():
         power_on_hours = str(smartctl_json.get("power_on_time", {}).get("hours")) + "h" # This is the same on nvme ssd, sata ssd and sata hdd
 
         logical_block_size = smartctl_json.get("logical_block_size", 512) # Used for calculating total disk writes
-        written_data = 0 # Initialize var for later
+        parsed_written_data = None # Initialize var for later
         fio_runtime = 20 # Initialize var for later
 
         if device.get("tran") == "nvme":
             raw_written_value = smartctl_json.get("nvme_smart_health_information_log", {}).get("data_units_written")
-            written_data = (raw_written_value * (logical_block_size * 1000)) / (1024 ** 3) # NVMEs use 512'000 as block size
-
-            fio_runtime = 5
+            if raw_written_value is not None:
+                parsed_written_data = (raw_written_value * (logical_block_size * 1000)) / (1024 ** 3) # NVMEs use 512'000 as block size
+                fio_runtime = 5
         elif device.get("tran") == "sata":
-            raw_written_value = 0
+            raw_written_value = None
             for entry in smartctl_json.get("ata_smart_attributes", {}).get("table", []):
                 if entry.get("id") == 241: # ID 241 stores info about total data written
                     raw_written_value = entry.get("raw", {}).get("value")
                     break
-            if disk_type == "SSD":
-                written_data = raw_written_value # SATA SSDs store this in GB
+            if raw_written_value is not None:
+                if disk_type == "SSD":
+                    parsed_written_data = raw_written_value # SATA SSDs store this in GB
+                    fio_runtime = 10
+                else:
+                    parsed_written_data = (raw_written_value * logical_block_size) / (1024 ** 3) # Other disks store it as logical block sizes written
+                    fio_runtime = 30
 
-                fio_runtime = 10
-            else:
-                written_data = (raw_written_value * logical_block_size) / (1024 ** 3) # Other disks store it as logical block sizes written
-
-                fio_runtime = 30
-
-        written_data = str(round(written_data, 2)) + " GiB"
+        if parsed_written_data is not None:
+            written_data = f"{parsed_written_data:.2f} GiB"
+        else:
+            written_data = "Unbekannt"
 
         print(f"Testing the random read speed of: {device.get("model")} at {path}")
         # fio_runtime = 5 # for testing
@@ -136,11 +138,20 @@ arch = run("getconf LONG_BIT") + "-bit"
 sys.append(["Prozessor", f"{cpu} {arch}"])
 
 # Boot Manager
-bootmgr = run(ff + "--structure bootmgr --bootmgr-format '{1}'")
+uefi = False
+bios = False
+if "UEFI is supported" in raw_dmi:
+    uefi = True   
+if "BIOS boot specification is supported" in raw_dmi:
+    bios = True
+
+bootmgr = "/".join([x for x, cond in [("UEFI", uefi), ("BIOS", bios)] if cond]) or "Unbekannt"
+# bootmgr = run(ff + "--structure bootmgr --bootmgr-format '{1}'")
 sys.append(["UEFI/Legacy", bootmgr])
 
 # TPM?
-tpm = run(ff + "--structure tpm")
+ff_tpm = run(ff + "--structure tpm")
+tpm = ff_tpm if ff_tpm != "" else "TPM wird nicht unterstützt"
 sys.append(["TPM", tpm])
 
 # Memory
