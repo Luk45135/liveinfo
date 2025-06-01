@@ -152,9 +152,11 @@ sys.append(["Arbeitsspeicher", memory])
 gpu = run(ff + "--structure gpu --gpu-format '{2}'")
 glxinfo_output = run("glxinfo -B")
 if "Unified memory: yes" in glxinfo_output:
-    gpu_mem = run(f"awk -F: '/Video memory/ {{print $NF}}' <<< '{glxinfo_output}'", shell=True) + "(shared)"
+    print("VRAM is shared")
+    gpu_mem = run(f"echo '{glxinfo_output}' | awk -F: '/Video memory/ {{print $NF}}'", shell=True) + "(shared)"
 else:
-    gpu_mem = run(f"awk -F: '/Dedicated video memory/ {{print $NF}}' <<< '{glxinfo_output}'", shell=True)
+    print("VRAM is dedicated")
+    gpu_mem = run(f"echo '{glxinfo_output}' | awk -F: '/Dedicated video memory/ {{print $NF}}'", shell=True)
 
 gpu_clock = run("clinfo --prop CL_DEVICE_MAX_CLOCK_FREQUENCY | awk '{print $NF}'", shell=True) # only works on some GPUs
 if gpu_clock != "":
