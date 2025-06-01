@@ -10,28 +10,19 @@ in
 pkgs.python3Packages.buildPythonApplication {
   pname = "fetchscript";
   version = "0.1.0";
-  format = "other"; # we’re not using setuptools or flit
+  format = "other";
 
   src = ./.;
 
-  nativeBuildInputs = with pkgs; [ makeWrapper ];
+  nativeBuildInputs = with pkgs; [
+    makeWrapper
+    copyDesktopItems
+  ];
 
   dependencies = with pkgs.python3Packages; [
     humanfriendly
     py-dmidecode
   ];
-
-  # propagatedBuildInputs = with pkgs; [
-  #     fastfetch
-  #     glxinfo
-  #     smartmontools
-  #     clinfo
-  #     f3
-  #     fio
-  #     libsForQt5.okular
-  #     typst
-  # ];
-
 
   installPhase = ''
     mkdir -p $out/bin
@@ -45,7 +36,26 @@ pkgs.python3Packages.buildPythonApplication {
     wrapProgram $out/bin/fetchscript \
       --set FETCHSCRIPT_SHARE $out/share/fetchscript \
       --prefix PATH : /run/wrappers/bin:/run/current-system/sw/bin
+
+    runHook postInstall
   '';
+
+  postInstall = ''
+    install -Dm444 ./search-list.png $out/share/icons/hicolor/256x256/apps/search-list.png
+  '';
+
+  desktopItems = [ (pkgs.makeDesktopItem {
+    name = "Testprotokoll";
+    genericName = "fetchscript";
+    comment = "Generiert ein schönes Testprotokoll mit Systeminformationen.";
+    desktopName = "Testprotokoll";
+    exec = "fetchscript";
+    icon = "search-list";
+    type = "Application";
+    terminal = true;
+    categories = ["Utility"];
+  }) ];
+
 
   meta.mainProgram = "fetchscript";
 }
