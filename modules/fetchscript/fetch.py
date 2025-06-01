@@ -191,5 +191,6 @@ with open(work_dir / "disks.csv", "w", newline="") as csvfile:
     print("Written disk info")
 # print(disks)
 
+print("Compiling Document")
 run(f"typst compile {work_dir}/testprotokoll.typ {work_dir}/info.pdf")
 run(f"okular {work_dir}/info.pdf")
