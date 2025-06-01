@@ -3,13 +3,6 @@
     ./modules/fetch.nix
   ];
 
-
-  boot.kernelModules = [
-    "tpm"
-    "tpm_tis"
-    "tpm_crb"
-  ];
-
   services = {
     printing.enable = true;
     avahi = {
