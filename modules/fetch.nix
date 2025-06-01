@@ -11,12 +11,12 @@ in
     after = [ "graphical-session.target" ];
     wantedBy = [ "default.target" ];
     description = "Generiert ein schönes Testprotokoll mit diversen Systeminformationen.";
-    # script = ''
-    #   cd /etc/fetchscript
-    #   python fetch.py
-    # '';
     serviceConfig = {
       ExecStart = "${fetchscript}/bin/fetchscript";
+      Environment = [
+        "DISPLAY=:0"
+        "XAUTHORITY=%h/.Xauthority"
+      ];
     };
   };
   

@@ -42,7 +42,8 @@ pkgs.python3Packages.buildPythonApplication {
     cp ${computerbrockiImg} $out/share/fetchscript/computerbrocki.png
 
     wrapProgram $out/bin/fetchscript \
-      --set FETCHSCRIPT_SHARE $out/share/fetchscript
+      --set FETCHSCRIPT_SHARE $out/share/fetchscript \
+      --prefix PATH : /run/wrappers/bin:/run/current-system/sw/bin
   '';
 
   meta.mainProgram = "fetchscript";
