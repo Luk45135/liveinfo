@@ -96,6 +96,11 @@
     packages = with pkgs; [
       noto-fonts
       roboto
+      nerd-fonts.jetbrains-mono
     ];
+    fontconfig = {
+      enable = true;
+      defaultFonts.monospace = [ "JetBrainsMono NFM" ];
+    };
   };
 }
