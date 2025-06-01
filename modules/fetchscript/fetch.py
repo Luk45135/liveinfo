@@ -57,9 +57,13 @@ def get_disks():
 
         smartctl_json = json.loads(run(f"sudo smartctl -a -j {path}")) # Get SMART info for disk
 
-        logical_block_size = smartctl_json.get("logical_block_size", 512) # Used for calculating total disk writes
+        # size_str = device.get("size") # for testing
+        print(f"Verifying real disk size of {path}")
+        size_str = run(f"sudo f3probe {path} | awk -F: '/Module/ {{gsub(/^ +| +$/, \"\", $2); split($2, a, \" \"); print a[1], a[2]}}'", shell=True)
+
         power_on_hours = str(smartctl_json.get("power_on_time", {}).get("hours")) + "h" # This is the same on nvme ssd, sata ssd and sata hdd
 
+        logical_block_size = smartctl_json.get("logical_block_size", 512) # Used for calculating total disk writes
         written_data = 0 # Initialize var for later
         fio_runtime = 20 # Initialize var for later
 
@@ -73,7 +77,6 @@ def get_disks():
             for entry in smartctl_json.get("ata_smart_attributes", {}).get("table", []):
                 if entry.get("id") == 241: # ID 241 stores info about total data written
                     raw_written_value = entry.get("raw", {}).get("value")
-                    # print(raw_written_value)
                     break
             if disk_type == "SSD":
                 written_data = raw_written_value # SATA SSDs store this in GB
@@ -87,7 +90,7 @@ def get_disks():
         written_data = str(round(written_data, 2)) + " GiB"
 
         print(f"Testing the random read speed of: {device.get("model")} at {path}")
-        fio_runtime = 5 # for testing
+        # fio_runtime = 5 # for testing
         fio_job = get_fio_read_json(path, fio_runtime)["jobs"][0]
         read_speed = str(round(fio_job.get("read", {}).get("bw") / 1024, 2)) + "MB/s" # bw = bandwidth in KB/s
 
@@ -95,9 +98,8 @@ def get_disks():
 
         disks.append(Disk(
             disk_type = disk_type,
-            size_str = device.get("size"),
-            # size_str = run(f"sudo f3probe {disk[3]} | awk -F: '/Module/ {{gsub(/^ +| +$/, \"\", $2); split($2, a, \" \"); print a[1], a[2]}}'", shell=True),
-            size_bytes = humanfriendly.parse_size(device.get("size")),
+            size_str = size_str,
+            size_bytes = humanfriendly.parse_size(device.get("size")), # only for sorting
             model = device.get("model", "Unknown"),
             power_on_hours = power_on_hours,
             written_data = written_data,
@@ -195,13 +197,11 @@ with open(work_dir / "system_info.csv", "w", newline="") as csvfile:
     csv_writer = writer(csvfile)
     csv_writer.writerows(sys)
     print("Written general info")
-# print(sys)
 
 with open(work_dir / "disks.csv", "w", newline="") as csvfile:
     csv_writer = writer(csvfile)
     csv_writer.writerows(disks)
     print("Written disk info")
-# print(disks)
 
 print("Compiling Document")
 run(f"typst compile {work_dir}/testprotokoll.typ {work_dir}/info.pdf")
