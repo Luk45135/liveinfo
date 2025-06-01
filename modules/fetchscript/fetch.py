@@ -8,8 +8,7 @@ from csv import writer
 import json
 from dataclasses import dataclass
 import humanfriendly
-
-
+from dmidecode import DMIParse
 
 
 
@@ -137,8 +136,14 @@ tpm = run(ff + "--structure tpm")
 sys.append(["TPM", tpm])
 
 # Memory
-memory = run("lsmem | awk '/Total online memory:/ {print $4}'", shell=True)
+# memory = run("lsmem | awk '/Total online memory:/ {print $4}'", shell=True)
+
+raw_dmi = run("sudo dmidecode")
+dmi = DMIParse(raw_dmi)
+
+memory = str(dmi.total_ram()) + " GB"
 sys.append(["Arbeitsspeicher", memory])
+
 
 # GPU
 gpu = run(ff + "--structure gpu --gpu-format '{2}'")

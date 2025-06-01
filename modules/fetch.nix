@@ -36,6 +36,10 @@ in
           command = "/run/current-system/sw/bin/f3probe";
           options = [ "NOPASSWD" ];
         }
+        {
+          command = "/run/current-system/sw/bin/dmidecode";
+          options = [ "NOPASSWD" ];
+        }
       ];
     }
   ];
