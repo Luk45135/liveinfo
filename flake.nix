@@ -27,6 +27,7 @@
         python3Packages.humanfriendly
         ## For infofetching
         fastfetch
+        dmidecode
         glxinfo
         smartmontools
         clinfo

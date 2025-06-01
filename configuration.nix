@@ -55,7 +55,6 @@
     firefox
 
     # Tools for reading out systeminfo
-    dmidecode
     pciutils
     furmark
     hardinfo2
@@ -72,6 +71,7 @@
     # python3Packages.humanfriendly
     ## For infofetching
     fastfetch
+    dmidecode
     glxinfo
     smartmontools
     clinfo
