@@ -147,9 +147,21 @@ sys.append(["Arbeitsspeicher", memory])
 
 # GPU
 gpu = run(ff + "--structure gpu --gpu-format '{2}'")
-gpu_mem = run("glxinfo -B | awk -F: '/Dedicated video memory/ { print $2 }'", shell=True)
-gpu_clock = run("clinfo --prop CL_DEVICE_MAX_CLOCK_FREQUENCY | awk '{print $NF}'", shell=True).strip() + " MHz" # only works if gpu supports opencl
-sys.append(["Grafikkarte", f"{gpu} {gpu_mem} {gpu_clock}".strip()]) # strip because gpu_mem or gpu_clock might not work
+glxinfo_output = run("glxinfo -B")
+if "Unified memory: yes" in glxinfo_output:
+    gpu_mem = run(f"awk -F: '/Video memory/ {{print $NF}}' <<< '{glxinfo_output}'", shell=True) + "(shared)"
+else:
+    gpu_mem = run(f"awk -F: '/Dedicated video memory/ {{print $NF}}' <<< '{glxinfo_output}'", shell=True)
+
+gpu_clock = run("clinfo --prop CL_DEVICE_MAX_CLOCK_FREQUENCY | awk '{print $NF}'", shell=True) # only works on some GPUs
+if gpu_clock != "":
+    gpu_clock += " MHz" # Only append MHz if we actually get the max clock
+else:
+    print("GPU does not show max clock frequency in clinfo")
+    gpu_clock = ""
+
+gpu_string = f"{gpu} {gpu_mem} {gpu_clock}".strip()
+sys.append(["Grafikkarte", gpu_string]) # strip because gpu_mem or gpu_clock might not work
 
 
 # List that will become disks.csv
