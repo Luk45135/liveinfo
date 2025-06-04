@@ -26,6 +26,7 @@
         python3
         python3Packages.humanfriendly
         python3Packages.py-dmidecode
+        python3Packages.pyside6
         ## For infofetching
         fastfetch
         dmidecode
