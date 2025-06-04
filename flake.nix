@@ -25,6 +25,7 @@
         # Needed for script
         python3
         python3Packages.humanfriendly
+        python3Packages.py-dmidecode
         ## For infofetching
         fastfetch
         dmidecode
