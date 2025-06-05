@@ -26,13 +26,14 @@
           www.computerbrocki.ch", size: 8pt)
         ]
     )
-  }
   },
   numbering: "1 / 1"
 )
 
 #show heading: set text(blue, 26pt)
 = Testprotokoll PC und Apple
+
+Diese Daten wurden automatisch generiert.
 
 #show heading: set text(black, 16pt)
 == Systeminformationen:
