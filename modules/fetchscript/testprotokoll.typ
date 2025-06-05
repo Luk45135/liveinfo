@@ -27,6 +27,8 @@
         ]
     )
   }
+  },
+  numbering: "1 / 1"
 )
 
 #show heading: set text(blue, 26pt)
