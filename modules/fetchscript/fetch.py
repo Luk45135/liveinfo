@@ -154,7 +154,7 @@ sys.append(["UEFI/Legacy", bootmgr])
 
 # TPM?
 ff_tpm = run(ff + "--structure tpm")
-tpm = ff_tpm if ff_tpm != "" else "TPM wird nicht unterstützt"
+tpm = ff_tpm if ff_tpm != "" else "TPM wird nicht unterstützt (überprüfe BIOS einstellungen)"
 sys.append(["TPM", tpm])
 
 # Memory
