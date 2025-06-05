@@ -163,7 +163,7 @@ sys.append(["Arbeitsspeicher", memory])
 
 
 # GPU
-gpu = run(ff + "--structure gpu --gpu-format '{2}'")
+gpu = run(ff + "--structure gpu --gpu-format '{1} {2}'")
 glxinfo_output = run("glxinfo -B")
 if "Unified memory: yes" in glxinfo_output:
     print("VRAM is shared")
