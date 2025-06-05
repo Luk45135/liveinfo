@@ -19,6 +19,10 @@ pkgs.python3Packages.buildPythonApplication {
     copyDesktopItems
   ];
 
+  propagatedBuildInputs = with pkgs; [
+    qt6.full
+  ];
+
   dependencies = with pkgs.python3Packages; [
     humanfriendly
     py-dmidecode
