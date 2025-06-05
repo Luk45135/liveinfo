@@ -134,8 +134,11 @@ sys.append(["Modell", host])
 
 # CPU
 cpu = run(ff + "--structure cpu --cpu-format '{1} ({3}c/{4}t) @ {7}'")
+sys.append(["Prozessor", cpu])
+
+# Architecture
 arch = run("getconf LONG_BIT") + "-bit"
-sys.append(["Prozessor", f"{cpu} {arch}"])
+sys.append(["Architektur", arch])
 
 # Boot Manager
 uefi = False
