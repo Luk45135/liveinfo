@@ -188,7 +188,8 @@ disks = []
 
 # Disks
 for disk in get_disks():
-    disks.append([disk.disk_type, disk.model])
+    disks.append(["Festplattentyp", disk.disk_type])
+    disks.append(["Modell", disk.model])
     disks.append(["Grösse", disk.size_str])
     disks.append(["Betriebsstunden", disk.power_on_hours])
     disks.append(["Geschriebene Daten", disk.written_data])
