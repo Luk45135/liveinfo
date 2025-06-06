@@ -32,7 +32,6 @@ def get_fio_read_json(filename: str, runtime: int = 20, jobname: str = "read_tes
 class Disk:
     disk_type: str # SDD / HDD
     size_str: str # 931.5G or 1.00TB depending on if f3 is used
-    size_bytes: float # parsed disk size used for sorting
     model: str
     power_on_hours: str
     written_data: str
@@ -101,7 +100,6 @@ def get_disks():
         disks.append(Disk(
             disk_type = disk_type,
             size_str = size_str,
-            size_bytes = humanfriendly.parse_size(device.get("size")), # only for sorting
             model = device.get("model", "Unknown"),
             power_on_hours = power_on_hours,
             written_data = written_data,
@@ -110,7 +108,7 @@ def get_disks():
             smart_status = smart_status
         ))
 
-    return sorted(disks, key=lambda d: (d.disk_type != "SSD", -d.size_bytes))
+    return sorted(disks, key=lambda d: (-float(d.read_speed[:-4])))
 
 
 # List that will become system_info.csv
