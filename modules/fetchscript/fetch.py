@@ -7,7 +7,6 @@ import shlex
 from csv import writer
 import json
 from dataclasses import dataclass
-import humanfriendly
 from dmidecode import DMIParse
 
 
