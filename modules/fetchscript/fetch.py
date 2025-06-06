@@ -52,7 +52,16 @@ def get_disks():
             continue # Skip if it's attached via USB
 
         path = device.get("path") # Get disk path like /dev/sda
-        disk_type = "HDD" if device.get("rota") else "SSD" # If it's a ROTAting disk its a HDD else its a SSD
+
+        disk_type = "" # Enumeration for disk_type
+        if device.get("tran") == "nvme":
+            disk_type = "NVMe SSD"
+        elif device.get("tran") == "sata":
+            if device.get("rota"):
+                disk_type = "HDD"
+            else:
+                disk_type = "SATA SSD"
+
 
         smartctl_json = json.loads(run(f"sudo smartctl -a -j {path}")) # Get SMART info for disk
 
@@ -66,24 +75,32 @@ def get_disks():
         parsed_written_data = None # Initialize var for later
         fio_runtime = 20 # Initialize var for later
 
-        if device.get("tran") == "nvme":
-            raw_written_value = smartctl_json.get("nvme_smart_health_information_log", {}).get("data_units_written")
-            if raw_written_value is not None:
-                parsed_written_data = (raw_written_value * (logical_block_size * 1000)) / (1024 ** 3) # NVMEs use 512'000 as block size
+
+        raw_written_value = None
+        match disk_type:
+            case "NVMe SSD":
                 fio_runtime = 5
-        elif device.get("tran") == "sata":
-            raw_written_value = None
-            for entry in smartctl_json.get("ata_smart_attributes", {}).get("table", []):
-                if entry.get("id") == 241: # ID 241 stores info about total data written
-                    raw_written_value = entry.get("raw", {}).get("value")
-                    break
-            if raw_written_value is not None:
-                if disk_type == "SSD":
+                raw_written_value = smartctl_json.get("nvme_smart_health_information_log", {}).get("data_units_written")
+                if raw_written_value is not None:
+                    parsed_written_data = (raw_written_value * (logical_block_size * 1000)) / (1024 ** 3) # NVMEs use 512'000 as block size
+            case "SATA SSD":
+                fio_runtime = 10
+                for entry in smartctl_json.get("ata_smart_attributes", {}).get("table", []):
+                    if entry.get("id") == 241: # ID 241 stores info about total data written
+                        raw_written_value = entry.get("raw", {}).get("value")
+                        break
+                if raw_written_value is not None:
                     parsed_written_data = raw_written_value # SATA SSDs store this in GB
-                    fio_runtime = 10
-                else:
-                    parsed_written_data = (raw_written_value * logical_block_size) / (1024 ** 3) # Other disks store it as logical block sizes written
-                    fio_runtime = 30
+            case "HDD":
+                fio_runtime = 30
+                for entry in smartctl_json.get("ata_smart_attributes", {}).get("table", []):
+                    if entry.get("id") == 241: # ID 241 stores info about total data written
+                        raw_written_value = entry.get("raw", {}).get("value")
+                        break
+                if raw_written_value is not None:
+                    parsed_written_data = (raw_written_value * logical_block_size) / (1024 ** 3) # Most HDD's store it as logical block sizes written
+            case _:
+                fio_runtime = 30
 
         if parsed_written_data is not None:
             written_data = f"{parsed_written_data:.2f} GiB"
