@@ -14,11 +14,11 @@
       columns: (2fr, 1fr),
       gutter: 1em,
         align(left)[
-          #text("Genossenschaft", size: 8pt) \
           #image("computerbrocki.png", width: 60%)
         ],
         align(left)[
           #text("
+          Genossenschaft
           Computerbrockenhaus
           St.Gallerstrasse 18
           8353, Elgg
