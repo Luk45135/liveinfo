@@ -31,12 +31,12 @@
 )
 
 #show heading: set text(blue, 26pt)
-= Testprotokoll PC und Apple
+= Systeminformationen
 
 Diese Daten wurden automatisch generiert.
 
 #show heading: set text(black, 16pt)
-== Systeminformationen:
+== Allgemein:
 #let info = csv("system_info.csv")
 
 #table(
