@@ -4,7 +4,20 @@
   ];
 
   services = {
-    printing.enable = true;
+    printing = {
+      enable = true;
+      drivers = with pkgs; [
+        gutenprintBin
+        hplipWithPlugin
+        postscript-lexmark
+        samsung-unified-linux-driver
+        splix
+        brlaser
+        brgenml1lpr
+        epson-escpr
+        epson-escpr2
+      ];
+    };
     avahi = {
       enable = true;
       nssmdns4 = true;
