@@ -34,10 +34,6 @@ class Prepare():
         self.prepare_work_dir()
 
 
-    def sha256(self, asset: Path) -> str:
-        path = asset.resolve()
-        return run(f"sha256sum {path}")
-
     def prepare_work_dir(self):
         for asset in self.asset_dir.iterdir():
             target = self.work_dir / asset.name
