@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+from filecmp import cmp
 import subprocess
 import shlex
 from csv import writer
@@ -40,11 +41,11 @@ class Prepare():
     def prepare_work_dir(self):
         for asset in self.asset_dir.iterdir():
             target = self.work_dir / asset.name
-            if self.sha256(asset) != self.sha256(target):
+            if not target.exists() or not cmp(asset, target, shallow=False):
                 print(f"Copying {asset.name} to {self.work_dir}")
                 target.write_bytes(asset.read_bytes())
             else:
-                print(f"Skipping {asset.name} as asset with matching hash already exists in {self.work_dir}")
+                print(f"Skipping {asset.name}, identical asset already exists in {self.work_dir}")
 
 
 
