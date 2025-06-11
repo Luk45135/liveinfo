@@ -1,6 +1,7 @@
 
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QMainWindow, QMessageBox, QVBoxLayout, QHBoxLayout, QLayout, QPushButton, QCheckBox, QLabel, QPlainTextEdit, QWidget
+from fetch import Prepare, SystemInfo, DiskInfo
 
 class Window(QMainWindow):
     def __init__(self):
@@ -78,3 +79,14 @@ class Window(QMainWindow):
 
     def start_fetching(self):
         self.log_textbox.appendPlainText("Gestartet")
+        
+        work_dir = Prepare().work_dir
+
+        if self.general_info_checkbox.isChecked():
+            SystemInfo(work_dir)
+        
+        if self.disk_info_checkbox.isChecked():
+            DiskInfo(work_dir)
+
+
+
