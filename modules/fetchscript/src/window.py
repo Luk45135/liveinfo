@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from subprocess import run
 from PySide6.QtCore import QSize, QThread, Signal
@@ -47,9 +48,10 @@ class Window(QMainWindow):
         self.start_button = QPushButton("Start")
         self.start_button.pressed.connect(self.start_fetching)
 
+        spinner_gif_path = Path(os.environ.get("FETCHSCRIPT_SHARE", "../share/fetchscript/")) / "spinner.gif"
         self.spinner = QLabel()
         self.spinner.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.spinner_movie = QMovie("../assets/spinner.gif")
+        self.spinner_movie = QMovie(str(spinner_gif_path.resolve()))
         self.spinner_movie.setScaledSize(QSize(32, 32))
         self.spinner.setMovie(self.spinner_movie)
         self.spinner.hide()
