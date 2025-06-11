@@ -264,12 +264,12 @@ class DiskInfo():
 
 
 if __name__ == "__main__":
-    prepare = Prepare()
+    work_dir = Prepare().work_dir
     
-    DiskInfo(prepare.work_dir).write_disk_info()
+    DiskInfo(work_dir).write_disk_info()
     
-    SystemInfo(prepare.work_dir).write_system_info()
+    SystemInfo(work_dir).write_system_info()
     
     print("Compiling Document")
-    run(f"typst compile {prepare.work_dir}/testprotokoll.typ {prepare.work_dir}/info.pdf")
-    run(f"okular {prepare.work_dir}/info.pdf")
+    run(f"typst compile {work_dir}/testprotokoll.typ {work_dir}/info.pdf")
+    run(f"okular {work_dir}/info.pdf")
