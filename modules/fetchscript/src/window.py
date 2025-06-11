@@ -1,7 +1,8 @@
 import os
+import logging
 from pathlib import Path
 from subprocess import Popen
-from PySide6.QtCore import QSize, QThread
+from PySide6.QtCore import Q_ARG, QMetaObject, QObject, QSize, QThread, Signal
 from PySide6.QtGui import QAction, QMovie, Qt
 from PySide6.QtWidgets import QMainWindow, QMessageBox, QVBoxLayout, QHBoxLayout, QPushButton, QCheckBox, QLabel, QPlainTextEdit, QWidget
 from fetch import Prepare, SystemInfo, DiskInfo, compile_pdf
@@ -25,6 +26,18 @@ class FetchRunner(QThread):
         Popen(["okular", str(pdf_path.resolve())])
 
 
+class TextBoxLogger(logging.Handler, QObject):
+    log_signal = Signal(str)
+
+    def __init__(self, textbox: QPlainTextEdit):
+        logging.Handler.__init__(self)
+        QObject.__init__(self)
+        self.textbox = textbox
+        self.log_signal.connect(self.textbox.appendPlainText)
+
+    def emit(self, record):
+        msg = self.format(record)
+        self.log_signal.emit(msg)
 
 
 class Window(QMainWindow):
@@ -35,6 +48,8 @@ class Window(QMainWindow):
         self.setWindowTitle(self.application_name)
 
         self.setup_ui()
+        self.setup_logger()
+
         self.setup_menu()
 
     def setup_ui(self):
@@ -95,6 +110,14 @@ class Window(QMainWindow):
         layout.addStretch()
         return layout, checkbox
 
+    def setup_logger(self):
+        textbox_handler = TextBoxLogger(self.log_textbox)
+        textbox_handler.setFormatter(logging.Formatter("[%(levelname)s] - %(message)s"))
+        
+        self.logger = logging.getLogger("fetchscript_logger")
+        self.logger.addHandler(textbox_handler)
+        self.logger.setLevel(logging.INFO)
+
     def setup_menu(self):
         menu_bar = self.menuBar()
 
@@ -116,7 +139,7 @@ class Window(QMainWindow):
         self.spinner.show()
         self.spinner_movie.start()
 
-        self.log_textbox.appendPlainText("Gestartet")
+        self.logger.info("Gestartet")
 
         self.worker = FetchRunner(self)
         self.worker.finished.connect(self.on_fetching_done)
@@ -126,7 +149,7 @@ class Window(QMainWindow):
         self.spinner_movie.stop()
         self.spinner.hide()
         self.start_button.show()
-        self.log_textbox.appendPlainText("Fertig")
+        self.logger.info("Fertig")
 
 
         
