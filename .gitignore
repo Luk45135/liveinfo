@@ -3,4 +3,4 @@
 /modules/*.csv
 /modules/*.pdf
 modules/fetchscript/result
-modules/fetchgui/__pycache__
+modules/fetchscript/src/__pycache__
