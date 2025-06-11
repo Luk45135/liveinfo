@@ -263,6 +263,12 @@ class DiskInfo():
             print("Written disk info")
 
 
+def compile_pdf(work_dir: Path) -> Path:
+    print("Compiling Document")
+    run(f"typst compile {work_dir}/testprotokoll.typ {work_dir}/info.pdf")
+    return work_dir / "info.pdf"
+
+
 if __name__ == "__main__":
     work_dir = Prepare().work_dir
     
