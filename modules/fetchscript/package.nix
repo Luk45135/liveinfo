@@ -9,7 +9,7 @@ let
 in
 pkgs.python3Packages.buildPythonApplication rec {
   pname = "fetchscript";
-  version = "0.2.0";
+  version = "0.3.0";
   format = "other";
 
   src = ./.;
