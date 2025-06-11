@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import logging
 from pathlib import Path
 from filecmp import cmp
 import subprocess
@@ -9,6 +10,10 @@ from csv import writer
 import json
 from dataclasses import dataclass
 from dmidecode import DMIParse
+
+
+# Setup logger
+logger = logging.getLogger("fetchscript_logger")
 
 
 
@@ -20,7 +25,7 @@ def run(cmd: str, shell: bool = False) -> str:
         shell=shell
     )
     if result.returncode != 0:
-        print(f"Command failed: {cmd}\n{result.stderr}")
+        logger.warning(f"Command failed: {cmd}\n{result.stderr}")
     return result.stdout.strip()
 
 
@@ -38,10 +43,10 @@ class Prepare():
         for asset in self.asset_dir.iterdir():
             target = self.work_dir / asset.name
             if not target.exists() or not cmp(asset, target, shallow=False):
-                print(f"Copying {asset.name} to {self.work_dir}")
+                logger.info(f"Copying {asset.name} to {self.work_dir}")
                 target.write_bytes(asset.read_bytes())
             else:
-                print(f"Skipping {asset.name}, identical asset already exists in {self.work_dir}")
+                logger.info(f"Skipping {asset.name}, identical asset already exists in {self.work_dir}")
 
 
 
@@ -102,17 +107,17 @@ class SystemInfo():
         gpu = run(ff + "--structure gpu --gpu-format '{1} {2}'")
         glxinfo_output = run("glxinfo -B")
         if "Unified memory: yes" in glxinfo_output:
-            print("VRAM is shared")
+            logger.info("VRAM is shared")
             gpu_mem = run(f"echo '{glxinfo_output}' | awk -F: '/Video memory/ {{print $NF}}'", shell=True) + "(shared)"
         else:
-            print("VRAM is dedicated")
+            logger.info("VRAM is dedicated")
             gpu_mem = run(f"echo '{glxinfo_output}' | awk -F: '/Dedicated video memory/ {{print $NF}}'", shell=True)
         
         gpu_clock = run("clinfo --prop CL_DEVICE_MAX_CLOCK_FREQUENCY | awk '{print $NF}'", shell=True) # only works on some GPUs
         if gpu_clock != "":
             gpu_clock += " MHz" # Only append MHz if we actually get the max clock
         else:
-            print("GPU does not show max clock frequency in clinfo")
+            logger.info("GPU does not show max clock frequency in clinfo")
             gpu_clock = ""
         
         gpu_string = f"{gpu} {gpu_mem} {gpu_clock}".strip()
@@ -126,7 +131,7 @@ class SystemInfo():
         with open(self.work_dir / "system_info.csv", "w", newline="") as csvfile:
             csv_writer = writer(csvfile)
             csv_writer.writerows(self.sys)
-            print("Written general info")
+            logger.info("Written general info")
 
 
 
@@ -179,9 +184,9 @@ class DiskInfo():
     
             smartctl_json = json.loads(run(f"sudo smartctl -a -j {path}")) # Get SMART info for disk
     
-            # size_str = device.get("size") # for testing
-            print(f"Verifying real disk size of {path}")
-            size_str = run(f"sudo f3probe {path} | awk -F: '/Module/ {{gsub(/^ +| +$/, \"\", $2); split($2, a, \" \"); print a[1], a[2]}}'", shell=True)
+            size_str = device.get("size") # for testing
+            logger.info(f"Verifying real disk size of {path}")
+            # size_str = run(f"sudo f3probe {path} | awk -F: '/Module/ {{gsub(/^ +| +$/, \"\", $2); split($2, a, \" \"); print a[1], a[2]}}'", shell=True)
     
             power_on_hours = str(smartctl_json.get("power_on_time", {}).get("hours")) + "h" # This is the same on nvme ssd, sata ssd and sata hdd
     
@@ -221,8 +226,8 @@ class DiskInfo():
             else:
                 written_data = "Unbekannt"
     
-            print(f"Testing the random read speed of: {device.get("model")} at {path}")
-            # fio_runtime = 5 # for testing
+            logger.info(f"Testing the random read speed of: {device.get("model")} at {path}")
+            fio_runtime = 5 # for testing
             fio_job = self.get_fio_read_json(path, fio_runtime)["jobs"][0]
             read_speed = str(round(fio_job.get("read", {}).get("bw") / 1024, 2)) + "MB/s" # bw = bandwidth in KB/s
     
@@ -260,11 +265,11 @@ class DiskInfo():
         with open(self.work_dir / "disks.csv", "w", newline="") as csvfile:
             csv_writer = writer(csvfile)
             csv_writer.writerows(self.disks)
-            print("Written disk info")
+            logger.info("Written disk info")
 
 
 def compile_pdf(work_dir: Path) -> Path:
-    print("Compiling Document")
+    logger.info("Compiling Document")
     run(f"typst compile {work_dir}/testprotokoll.typ {work_dir}/info.pdf")
     return work_dir / "info.pdf"
 
