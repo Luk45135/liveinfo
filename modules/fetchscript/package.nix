@@ -7,9 +7,9 @@ let
     hash = "sha256-6LuXzzMxGC74YtGZYVEFpMnTC+a+umuUUpjaBX5dca0=";
   };
 in
-pkgs.python3Packages.buildPythonApplication {
+pkgs.python3Packages.buildPythonApplication rec {
   pname = "fetchscript";
-  version = "0.1.0";
+  version = "0.2.0";
   format = "other";
 
   src = ./.;
@@ -19,22 +19,24 @@ pkgs.python3Packages.buildPythonApplication {
     copyDesktopItems
   ];
 
-  propagatedBuildInputs = with pkgs; [
-    qt6.full
-  ];
-
-  dependencies = with pkgs.python3Packages; [
-    py-dmidecode
+  propagatedBuildInputs = with pkgs.python3Packages; [ 
     pyside6
+    py-dmidecode
   ];
 
   installPhase = ''
+    mkdir -p $out/lib/fetchscript
+    cp src/*.py $out/lib/fetchscript
+
     mkdir -p $out/bin
-    cp src/fetch.py $out/bin/fetchscript
+    cat > $out/bin/fetchscript <<EOF
+    #!${pkgs.runtimeShell}
+    exec ${pkgs.python3.interpreter} $out/lib/fetchscript/main.py "\$@"
+    EOF
     chmod +x $out/bin/fetchscript
 
     mkdir -p $out/share/fetchscript
-    cp assets/testprotokoll.typ $out/share/fetchscript/testprotokoll.typ
+    cp assets/* $out/share/fetchscript
     cp ${computerbrockiImg} $out/share/fetchscript/computerbrocki.png
 
     wrapProgram $out/bin/fetchscript \
@@ -50,17 +52,16 @@ pkgs.python3Packages.buildPythonApplication {
 
   desktopItems = [ (pkgs.makeDesktopItem {
     name = "Testprotokoll";
-    genericName = "fetchscript";
+    genericName = pname;
     comment = "Generiert ein schönes Testprotokoll mit Systeminformationen.";
     desktopName = "Testprotokoll";
-    exec = "fetchscript";
+    exec = pname;
     icon = "search-list";
     type = "Application";
     terminal = true;
     categories = ["Utility"];
   }) ];
 
-
-  meta.mainProgram = "fetchscript";
+  meta.mainProgram = pname;
 }
 
