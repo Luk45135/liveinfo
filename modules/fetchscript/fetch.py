@@ -261,14 +261,13 @@ class DiskInfo():
             print("Written disk info")
 
 
-
-prepare = Prepare()
-
-
-DiskInfo().write_disk_info()
-
-SystemInfo().write_system_info()
-
-print("Compiling Document")
-run(f"typst compile {prepare.work_dir}/testprotokoll.typ {prepare.work_dir}/info.pdf")
-run(f"okular {prepare.work_dir}/info.pdf")
+if __name__ == "__main__":
+    prepare = Prepare()
+    
+    DiskInfo().write_disk_info()
+    
+    SystemInfo().write_system_info()
+    
+    print("Compiling Document")
+    run(f"typst compile {prepare.work_dir}/testprotokoll.typ {prepare.work_dir}/info.pdf")
+    run(f"okular {prepare.work_dir}/info.pdf")
