@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from subprocess import run
+from subprocess import Popen
 from PySide6.QtCore import QSize, QThread, Signal
 from PySide6.QtGui import QAction, QMovie, Qt
 from PySide6.QtWidgets import QMainWindow, QMessageBox, QVBoxLayout, QHBoxLayout, QPushButton, QCheckBox, QLabel, QPlainTextEdit, QWidget
@@ -8,8 +8,6 @@ from fetch import Prepare, SystemInfo, DiskInfo, compile_pdf
 
 
 class FetchRunner(QThread):
-
-    finished = Signal()
     def __init__(self, Window: "Window"):
         super().__init__()
         self.Window = Window
@@ -18,14 +16,13 @@ class FetchRunner(QThread):
         work_dir = Prepare().work_dir
 
         if self.Window.general_info_checkbox.isChecked():
-            SystemInfo(work_dir)
+            SystemInfo(work_dir).write_system_info()
         
         if self.Window.disk_info_checkbox.isChecked():
-            DiskInfo(work_dir)
+            DiskInfo(work_dir).write_disk_info()
 
         pdf_path: Path = compile_pdf(work_dir)
-        self.finished.emit()
-        run(["xdg-open", str(pdf_path.resolve)])
+        Popen(["okular", str(pdf_path.resolve())])
 
 
 
