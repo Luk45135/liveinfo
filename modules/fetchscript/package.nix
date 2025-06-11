@@ -27,21 +27,18 @@ pkgs.python3Packages.buildPythonApplication rec {
   installPhase = ''
     mkdir -p $out/lib/fetchscript
     cp src/*.py $out/lib/fetchscript
+    chmod +x $out/lib/fetchscript/main.py
+
+    wrapProgram $out/lib/fetchscript/main.py \
+      --set FETCHSCRIPT_SHARE $out/share/fetchscript \
+      --prefix PATH : /run/wrappers/bin:/run/current-system/sw/bin
 
     mkdir -p $out/bin
-    cat > $out/bin/fetchscript <<EOF
-    #!${pkgs.runtimeShell}
-    exec ${pkgs.python3.interpreter} $out/lib/fetchscript/main.py "\$@"
-    EOF
-    chmod +x $out/bin/fetchscript
+    ln -s $out/lib/fetchscript/main.py $out/bin/fetchscript
 
     mkdir -p $out/share/fetchscript
     cp assets/* $out/share/fetchscript
     cp ${computerbrockiImg} $out/share/fetchscript/computerbrocki.png
-
-    wrapProgram $out/bin/fetchscript \
-      --set FETCHSCRIPT_SHARE $out/share/fetchscript \
-      --prefix PATH : /run/wrappers/bin:/run/current-system/sw/bin
 
     runHook postInstall
   '';
