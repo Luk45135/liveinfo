@@ -30,11 +30,11 @@ pkgs.python3Packages.buildPythonApplication {
 
   installPhase = ''
     mkdir -p $out/bin
-    cp fetch.py $out/bin/fetchscript
+    cp src/fetch.py $out/bin/fetchscript
     chmod +x $out/bin/fetchscript
 
     mkdir -p $out/share/fetchscript
-    cp testprotokoll.typ $out/share/fetchscript/testprotokoll.typ
+    cp assets/testprotokoll.typ $out/share/fetchscript/testprotokoll.typ
     cp ${computerbrockiImg} $out/share/fetchscript/computerbrocki.png
 
     wrapProgram $out/bin/fetchscript \
@@ -45,7 +45,7 @@ pkgs.python3Packages.buildPythonApplication {
   '';
 
   postInstall = ''
-    install -Dm444 ./search-list.png $out/share/icons/hicolor/256x256/apps/search-list.png
+    install -Dm444 ./assets/search-list.png $out/share/icons/hicolor/256x256/apps/search-list.png
   '';
 
   desktopItems = [ (pkgs.makeDesktopItem {
