@@ -24,7 +24,6 @@ pkgs.python3Packages.buildPythonApplication {
   ];
 
   dependencies = with pkgs.python3Packages; [
-    humanfriendly
     py-dmidecode
     pyside6
   ];
