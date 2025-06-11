@@ -1,7 +1,33 @@
+from pathlib import Path
+from subprocess import run
+from PySide6.QtCore import QSize, QThread, Signal
+from PySide6.QtGui import QAction, QMovie, Qt
+from PySide6.QtWidgets import QMainWindow, QMessageBox, QVBoxLayout, QHBoxLayout, QPushButton, QCheckBox, QLabel, QPlainTextEdit, QWidget
+from fetch import Prepare, SystemInfo, DiskInfo, compile_pdf
 
-from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QMainWindow, QMessageBox, QVBoxLayout, QHBoxLayout, QLayout, QPushButton, QCheckBox, QLabel, QPlainTextEdit, QWidget
-from fetch import Prepare, SystemInfo, DiskInfo
+
+class FetchRunner(QThread):
+
+    finished = Signal()
+    def __init__(self, Window: "Window"):
+        super().__init__()
+        self.Window = Window
+
+    def run(self):
+        work_dir = Prepare().work_dir
+
+        if self.Window.general_info_checkbox.isChecked():
+            SystemInfo(work_dir)
+        
+        if self.Window.disk_info_checkbox.isChecked():
+            DiskInfo(work_dir)
+
+        pdf_path: Path = compile_pdf(work_dir)
+        self.finished.emit()
+        run(["xdg-open", str(pdf_path.resolve)])
+
+
+
 
 class Window(QMainWindow):
     def __init__(self):
@@ -20,6 +46,13 @@ class Window(QMainWindow):
 
         self.start_button = QPushButton("Start")
         self.start_button.pressed.connect(self.start_fetching)
+
+        self.spinner = QLabel()
+        self.spinner.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.spinner_movie = QMovie("../assets/spinner.gif")
+        self.spinner_movie.setScaledSize(QSize(32, 32))
+        self.spinner.setMovie(self.spinner_movie)
+        self.spinner.hide()
 
         self.log_textbox = QPlainTextEdit()
         self.log_textbox.setReadOnly(True)
@@ -45,6 +78,7 @@ class Window(QMainWindow):
         hbox.addWidget(self.log_textbox)
 
         vbox.addWidget(self.start_button)
+        vbox.addWidget(self.spinner)
 
         # Set Layout
         central_widget = QWidget()
@@ -78,15 +112,25 @@ class Window(QMainWindow):
 
 
     def start_fetching(self):
-        self.log_textbox.appendPlainText("Gestartet")
-        
-        work_dir = Prepare().work_dir
+        # Repace button with spinner
+        self.start_button.hide()
+        self.spinner.show()
+        self.spinner_movie.start()
 
-        if self.general_info_checkbox.isChecked():
-            SystemInfo(work_dir)
+        self.log_textbox.appendPlainText("Gestartet")
+
+        self.worker = FetchRunner(self)
+        self.worker.finished.connect(self.on_fetching_done)
+        self.worker.start()
+
+    def on_fetching_done(self):
+        self.spinner_movie.stop()
+        self.spinner.hide()
+        self.start_button.show()
+        self.log_textbox.appendPlainText("Fertig")
+
+
         
-        if self.disk_info_checkbox.isChecked():
-            DiskInfo(work_dir)
 
 
 
