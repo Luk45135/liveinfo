@@ -46,11 +46,12 @@ class Prepare():
 
 
 class SystemInfo():
-    def __init__(self) -> None:
+    def __init__(self, work_dir: Path) -> None:
         # List that will become system_info.csv
         self.sys = [
             ["Preissegment", "☐ Hobby   ☐ Klein   ☐ Mittel   ☐ Gross"]
         ]
+        self.work_dir = work_dir
 
     def get_system_info(self):
         # Parsed dmidecode
@@ -122,7 +123,7 @@ class SystemInfo():
 
         self.get_system_info()
 
-        with open(prepare.work_dir / "system_info.csv", "w", newline="") as csvfile:
+        with open(self.work_dir / "system_info.csv", "w", newline="") as csvfile:
             csv_writer = writer(csvfile)
             csv_writer.writerows(self.sys)
             print("Written general info")
@@ -141,9 +142,10 @@ class Disk:
     smart_status: str
 
 class DiskInfo():
-    def __init__(self) -> None:
+    def __init__(self, work_dir: Path) -> None:
         # List that will become disks.csv
         self.disks = []
+        self.work_dir = work_dir
     
 
     def get_fio_read_json(self, filename: str, runtime: int = 20, jobname: str = "read_test") -> dict:
@@ -255,7 +257,7 @@ class DiskInfo():
 
         self.get_disk_info()
         
-        with open(prepare.work_dir / "disks.csv", "w", newline="") as csvfile:
+        with open(self.work_dir / "disks.csv", "w", newline="") as csvfile:
             csv_writer = writer(csvfile)
             csv_writer.writerows(self.disks)
             print("Written disk info")
@@ -264,9 +266,9 @@ class DiskInfo():
 if __name__ == "__main__":
     prepare = Prepare()
     
-    DiskInfo().write_disk_info()
+    DiskInfo(prepare.work_dir).write_disk_info()
     
-    SystemInfo().write_system_info()
+    SystemInfo(prepare.work_dir).write_system_info()
     
     print("Compiling Document")
     run(f"typst compile {prepare.work_dir}/testprotokoll.typ {prepare.work_dir}/info.pdf")
