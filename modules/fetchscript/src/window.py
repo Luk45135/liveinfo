@@ -88,8 +88,8 @@ class Window(QMainWindow):
         options_vbox.addStretch()
 
         vbox.addLayout(hbox)
-        hbox.addLayout(options_vbox)
-        hbox.addWidget(self.log_textbox)
+        hbox.addLayout(options_vbox, stretch=1)
+        hbox.addWidget(self.log_textbox, stretch=3)
 
         vbox.addWidget(self.start_button)
         vbox.addWidget(self.spinner)
