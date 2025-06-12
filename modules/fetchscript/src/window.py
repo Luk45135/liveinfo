@@ -61,6 +61,7 @@ class Window(QMainWindow):
         self.application_name = "SystemReport"
         self.version = "0.3.2"
         self.setWindowTitle(self.application_name)
+        self.resize(960, 540)
 
         self.asset_path = Path(os.environ.get("FETCHSCRIPT_SHARE", "../share/fetchscript/"))
 
