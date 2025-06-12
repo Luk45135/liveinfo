@@ -74,6 +74,9 @@ class Window(QMainWindow):
         # Create Widgets
         options_label = QLabel("Optionen:")
 
+        open_folder_button = QPushButton("Öffne Ordner")
+        open_folder_button.pressed.connect(self.open_folder)
+
         self.start_button = QPushButton("Start")
         self.start_button.pressed.connect(self.start_fetching)
 
@@ -92,6 +95,7 @@ class Window(QMainWindow):
         vbox = QVBoxLayout()
         hbox = QHBoxLayout()
         options_vbox = QVBoxLayout()
+        buttons_hbox = QHBoxLayout()
 
             # Options
         options_vbox.addWidget(options_label)
@@ -108,8 +112,11 @@ class Window(QMainWindow):
         hbox.addLayout(options_vbox, stretch=1)
         hbox.addWidget(self.log_textbox, stretch=3)
 
-        vbox.addWidget(self.start_button)
-        vbox.addWidget(self.spinner)
+        buttons_hbox.addWidget(open_folder_button)
+        buttons_hbox.addWidget(self.start_button)
+        buttons_hbox.addWidget(self.spinner)
+
+        vbox.addLayout(buttons_hbox)
 
         # Set Layout
         central_widget = QWidget()
@@ -149,6 +156,8 @@ class Window(QMainWindow):
     def show_about_dialog(self):
         QMessageBox.about(self, f"Über {self.application_name}", f"{self.application_name}\nVersion {self.version}\nErstellt von Lukas Dorji")
 
+    def open_folder(self):
+        Popen(["xdg-open", Prepare().work_dir])
 
     def start_fetching(self):
         # Repace button with spinner
