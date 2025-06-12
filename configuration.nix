@@ -4,6 +4,8 @@
     ./modules/printing.nix
   ];
 
+  isoImage.squashfsCompression = "gzip -Xcompression-level 1";
+
   services = {
     pipewire = {
       enable = true;
