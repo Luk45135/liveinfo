@@ -47,6 +47,8 @@ class Window(QMainWindow):
         self.version = "0.3.1"
         self.setWindowTitle(self.application_name)
 
+        self.asset_path = Path(os.environ.get("FETCHSCRIPT_SHARE", "../share/fetchscript/"))
+
         self.setup_ui()
         self.setup_logger()
 
@@ -60,10 +62,10 @@ class Window(QMainWindow):
         self.start_button = QPushButton("Start")
         self.start_button.pressed.connect(self.start_fetching)
 
-        spinner_gif_path = Path(os.environ.get("FETCHSCRIPT_SHARE", "../share/fetchscript/")) / "spinner.gif"
+        spinner_gif_path = (self.asset_path / "spinner.gif").resolve()
         self.spinner = QLabel()
         self.spinner.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.spinner_movie = QMovie(str(spinner_gif_path.resolve()))
+        self.spinner_movie = QMovie(str(spinner_gif_path))
         self.spinner_movie.setScaledSize(QSize(32, 32))
         self.spinner.setMovie(self.spinner_movie)
         self.spinner.hide()
