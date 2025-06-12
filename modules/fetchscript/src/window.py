@@ -43,7 +43,7 @@ class TextBoxLogger(logging.Handler, QObject):
 class Window(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.application_name = "SystemInfo Report"
+        self.application_name = "SystemReport"
         self.version = "0.3.1"
         self.setWindowTitle(self.application_name)
 

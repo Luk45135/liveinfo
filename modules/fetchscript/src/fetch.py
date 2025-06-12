@@ -270,8 +270,8 @@ class DiskInfo():
 
 def compile_pdf(work_dir: Path) -> Path:
     logger.info("Compiling Document")
-    run(f"typst compile {work_dir}/testprotokoll.typ {work_dir}/info.pdf")
-    return work_dir / "info.pdf"
+    run(f"typst compile {work_dir}/systemreport.typ {work_dir}/systemreport.pdf")
+    return work_dir / "systemreport.pdf"
 
 
 if __name__ == "__main__":
@@ -281,6 +281,5 @@ if __name__ == "__main__":
     
     SystemInfo(work_dir).write_system_info()
     
-    print("Compiling Document")
-    run(f"typst compile {work_dir}/testprotokoll.typ {work_dir}/info.pdf")
-    run(f"okular {work_dir}/info.pdf")
+    pdf_path = compile_pdf(work_dir)
+    run(f"okular {pdf_path}")

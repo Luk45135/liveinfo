@@ -6,11 +6,11 @@ in
 {
   environment.systemPackages = [ fetchscript ];
 
-  systemd.user.services.testprotokoll = {
+  systemd.user.services.systemreport = {
     enable = true;
     after = [ "graphical-session.target" ];
     wantedBy = [ "graphical-session.target" ];
-    description = "Generiert ein schönes Testprotokoll mit diversen Systeminformationen.";
+    description = "Erstellt einen übersichtlichen PDF-Bericht mit wichtigen Informationen zum System und zur Hardware.";
     serviceConfig = {
       ExecStart = "${fetchscript}/bin/fetchscript";
       Environment = [

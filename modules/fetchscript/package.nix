@@ -46,10 +46,10 @@ pkgs.python3Packages.buildPythonApplication rec {
   '';
 
   desktopItems = [ (pkgs.makeDesktopItem {
-    name = "Testprotokoll";
+    name = "SystemReport";
     genericName = pname;
-    comment = "Generiert ein schönes Testprotokoll mit Systeminformationen.";
-    desktopName = "Testprotokoll";
+    comment = "Erstellt einen übersichtlichen PDF-Bericht mit wichtigen Informationen zum System und zur Hardware.";
+    desktopName = "SystemReport";
     exec = pname;
     icon = "search-list";
     type = "Application";
