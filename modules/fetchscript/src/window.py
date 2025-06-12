@@ -13,14 +13,27 @@ class FetchRunner(QThread):
         super().__init__()
         self.Window = Window
 
+    def handle_backup(self, csv_path: Path) -> bool:
+        csv_backup = csv_path.with_suffix(csv_path.suffix + ".bak").resolve()
+        if csv_backup.exists():
+            self.Window.logger.info(f"Restoring {csv_backup.name}")
+            csv_backup.rename(csv_path)
+            return True
+        else:
+            return False
+
     def run(self):
         work_dir = Prepare().work_dir
 
         if self.Window.general_info_checkbox.isChecked():
-            SystemInfo(work_dir).write_system_info()
+            system_info_path = Path(work_dir / "system_info.csv")
+            if not self.handle_backup(system_info_path):
+                SystemInfo(work_dir).write_system_info()
         
         if self.Window.disk_info_checkbox.isChecked():
-            DiskInfo(work_dir).write_disk_info()
+            disk_info_path = Path(work_dir / "disks.csv")
+            if not self.handle_backup(disk_info_path):
+                DiskInfo(work_dir).write_disk_info()
 
         pdf_path: Path = compile_pdf(work_dir)
         Popen(["okular", str(pdf_path.resolve())])
