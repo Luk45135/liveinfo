@@ -53,7 +53,7 @@ pkgs.python3Packages.buildPythonApplication rec {
     exec = pname;
     icon = "search-list";
     type = "Application";
-    terminal = true;
+    terminal = false;
     categories = ["Utility"];
   }) ];
 
