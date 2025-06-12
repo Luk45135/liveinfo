@@ -184,9 +184,9 @@ class DiskInfo():
     
             smartctl_json = json.loads(run(f"sudo smartctl -a -j {path}")) # Get SMART info for disk
     
-            size_str = device.get("size") # for testing
+            # size_str = device.get("size") # for testing
             logger.info(f"Verifying real disk size of {path}")
-            # size_str = run(f"sudo f3probe {path} | awk -F: '/Module/ {{gsub(/^ +| +$/, \"\", $2); split($2, a, \" \"); print a[1], a[2]}}'", shell=True)
+            size_str = run(f"sudo f3probe {path} | awk -F: '/Module/ {{gsub(/^ +| +$/, \"\", $2); split($2, a, \" \"); print a[1], a[2]}}'", shell=True)
     
             power_on_hours = str(smartctl_json.get("power_on_time", {}).get("hours")) + "h" # This is the same on nvme ssd, sata ssd and sata hdd
     
@@ -227,7 +227,7 @@ class DiskInfo():
                 written_data = "Unbekannt"
     
             logger.info(f"Testing the random read speed of: {device.get("model")} at {path}")
-            fio_runtime = 5 # for testing
+            # fio_runtime = 5 # for testing
             fio_job = self.get_fio_read_json(path, fio_runtime)["jobs"][0]
             read_speed = str(round(fio_job.get("read", {}).get("bw") / 1024, 2)) + "MB/s" # bw = bandwidth in KB/s
     
