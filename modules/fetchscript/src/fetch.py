@@ -36,8 +36,6 @@ class Prepare():
         self.work_dir = Path.home() / "Documents" / "fetchscript"
         self.work_dir.mkdir(parents=True, exist_ok=True)
 
-        self.prepare_work_dir()
-
 
     def backup_csvs(self):
 

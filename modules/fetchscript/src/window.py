@@ -23,7 +23,9 @@ class FetchRunner(QThread):
             return False
 
     def run(self):
-        work_dir = Prepare().work_dir
+        prepare = Prepare() # Init Prepare object
+        prepare.prepare_work_dir() # actually prepare working directory
+        work_dir = prepare.work_dir
 
         if self.Window.general_info_checkbox.isChecked():
             system_info_path = Path(work_dir / "system_info.csv")
