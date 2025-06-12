@@ -139,7 +139,7 @@ class Window(QMainWindow):
         self.spinner.show()
         self.spinner_movie.start()
 
-        self.logger.info("Gestartet")
+        self.logger.info("Started")
 
         self.worker = FetchRunner(self)
         self.worker.finished.connect(self.on_fetching_done)
@@ -149,7 +149,7 @@ class Window(QMainWindow):
         self.spinner_movie.stop()
         self.spinner.hide()
         self.start_button.show()
-        self.logger.info("Fertig")
+        self.logger.info("Finished")
 
 
         
