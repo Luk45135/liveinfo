@@ -1,29 +1,10 @@
 {pkgs, ...}: {
   imports = [
     ./modules/fetch.nix
+    ./modules/printing.nix
   ];
 
   services = {
-    printing = {
-      enable = true;
-      drivers = with pkgs; [
-        gutenprintBin
-        hplipWithPlugin
-        postscript-lexmark
-        samsung-unified-linux-driver
-        splix
-        brlaser
-        brgenml1lpr
-        epson-escpr
-        epson-escpr2
-      ];
-    };
-    avahi = {
-      enable = true;
-      nssmdns4 = true;
-      openFirewall = true;
-    };
-
     pipewire = {
       enable = true;
       pulse.enable = true;
