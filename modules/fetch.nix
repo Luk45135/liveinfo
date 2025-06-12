@@ -9,7 +9,7 @@ in
   systemd.user.services.testprotokoll = {
     enable = true;
     after = [ "graphical-session.target" ];
-    wantedBy = [ "default.target" ];
+    wantedBy = [ "graphical-session.target" ];
     description = "Generiert ein schönes Testprotokoll mit diversen Systeminformationen.";
     serviceConfig = {
       ExecStart = "${fetchscript}/bin/fetchscript";
