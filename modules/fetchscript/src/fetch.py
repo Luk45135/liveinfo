@@ -128,7 +128,7 @@ class SystemInfo():
             gpu_type = "Dedizierte Grafikkarte"
         
         gpu_clock_clinfo = run("clinfo --prop CL_DEVICE_MAX_CLOCK_FREQUENCY | awk '{print $NF}'", shell=True) # only works on some GPUs
-        gpu_clock_ff = run(ff + "-s gpu --gpu-format '{12}'")
+        gpu_clock_ff = run(ff + "-s gpu --gpu-format '@ {12}'")
         if gpu_clock_clinfo != "":
             gpu_clock = f"@ {gpu_clock_clinfo} MHz" # Only append MHz if we actually get the max clock
         elif gpu_clock_ff != "":
