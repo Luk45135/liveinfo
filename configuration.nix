@@ -62,9 +62,6 @@
   };
 
   environment.systemPackages = with pkgs; [
-    alacritty
-    tmux
-    neovim
     firefox
 
     # Tools for reading out systeminfo
