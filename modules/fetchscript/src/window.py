@@ -14,7 +14,7 @@ class FetchRunner(QThread):
         self.Window = Window
 
     def handle_backup(self, csv_path: Path) -> bool:
-        csv_backup = csv_path.with_suffix(csv_path.suffix + ".bak").resolve()
+        csv_backup = csv_path.with_suffix(csv_path.suffix + ".bak")
         if csv_backup.exists():
             self.Window.logger.info(f"Restoring {csv_backup.name}")
             csv_backup.rename(csv_path)
@@ -38,7 +38,7 @@ class FetchRunner(QThread):
                 DiskInfo(work_dir).write_disk_info()
 
         pdf_path: Path = compile_pdf(work_dir)
-        Popen(["okular", str(pdf_path.resolve())])
+        Popen(["okular", pdf_path])
 
 
 class TextBoxLogger(logging.Handler, QObject):
@@ -77,7 +77,7 @@ class Window(QMainWindow):
         self.start_button = QPushButton("Start")
         self.start_button.pressed.connect(self.start_fetching)
 
-        spinner_gif_path = (self.asset_path / "spinner.gif").resolve()
+        spinner_gif_path = (self.asset_path / "spinner.gif")
         self.spinner = QLabel()
         self.spinner.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.spinner_movie = QMovie(str(spinner_gif_path))

@@ -40,7 +40,7 @@ class Prepare():
     def backup_csvs(self):
 
         for csv_name in ["system_info.csv", "disks.csv"]:
-            csv_file_path = Path(self.work_dir / csv_name).resolve()
+            csv_file_path = Path(self.work_dir / csv_name)
             if csv_file_path.exists() and csv_file_path.read_text() != "":
                 logger.info(f"Backing up {csv_file_path.name}")
                 csv_file_path.rename(csv_file_path.with_suffix(csv_file_path.suffix + ".bak")) 
@@ -52,7 +52,7 @@ class Prepare():
 
         for asset in ["computerbrocki.png", "systemreport.typ"]: # Make sure needed assets are in working directory
             target = self.work_dir / asset
-            asset_path = Path(self.asset_dir / asset).resolve()
+            asset_path = Path(self.asset_dir / asset)
             if not target.exists() or not cmp(asset_path, target, shallow=False):
                 logger.info(f"Copying {asset} to {self.work_dir}")
                 target.write_bytes(Path(asset_path).read_bytes())
