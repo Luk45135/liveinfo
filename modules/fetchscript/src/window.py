@@ -59,7 +59,7 @@ class Window(QMainWindow):
     def __init__(self):
         super().__init__()
         self.application_name = "SystemReport"
-        self.version = "0.3.2"
+        self.version = "0.3.3"
         self.setWindowTitle(self.application_name)
         self.resize(960, 540)
 
