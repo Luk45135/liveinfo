@@ -118,24 +118,29 @@ class SystemInfo():
         
         
         # GPU
-        gpu = run(ff + "--structure gpu --gpu-format '{1} {2}'")
+        gpu_name = run(ff + "--structure gpu --gpu-format '{1} {2}'")
         glxinfo_output = run("glxinfo -B")
         if "Unified memory: yes" in glxinfo_output:
             logger.info("VRAM is shared")
-            gpu_mem = run(f"echo '{glxinfo_output}' | awk -F: '/Video memory/ {{print $NF}}'", shell=True) + "(shared)"
+            gpu_mem = run(f"echo '{glxinfo_output}' | awk -F: '/Video memory/ {{print $NF}}'", shell=True) + " (geteilt)"
+            gpu_type = "Integriete Grafikkarte"
         else:
             logger.info("VRAM is dedicated")
             gpu_mem = run(f"echo '{glxinfo_output}' | awk -F: '/Dedicated video memory/ {{print $NF}}'", shell=True)
+            gpu_type = "Dedizierte Grafikkarte"
         
-        gpu_clock = run("clinfo --prop CL_DEVICE_MAX_CLOCK_FREQUENCY | awk '{print $NF}'", shell=True) # only works on some GPUs
-        if gpu_clock != "":
-            gpu_clock += " MHz" # Only append MHz if we actually get the max clock
+        gpu_clock_clinfo = run("clinfo --prop CL_DEVICE_MAX_CLOCK_FREQUENCY | awk '{print $NF}'", shell=True) # only works on some GPUs
+        gpu_clock_ff = run(ff + "-s gpu --gpu-format '{12}'")
+        if gpu_clock_clinfo != "":
+            gpu_clock = f"@ {gpu_clock_clinfo} MHz" # Only append MHz if we actually get the max clock
+        elif gpu_clock_ff != "":
+            gpu_clock = gpu_clock_ff
         else:
-            logger.info("GPU does not show max clock frequency in clinfo")
+            logger.warn("Can't fetch max GPU clock speed")
             gpu_clock = ""
         
-        gpu_string = f"{gpu} {gpu_mem} {gpu_clock}".strip()
-        self.sys.append(["Grafikkarte", gpu_string]) # strip because gpu_mem or gpu_clock might not work
+        gpu_string = f"{gpu_name} {gpu_mem} {gpu_clock}".strip()
+        self.sys.append([gpu_type, gpu_string]) # strip because gpu_mem or gpu_clock might not work
 
 
     def write_system_info(self):
