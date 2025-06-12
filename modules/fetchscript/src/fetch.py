@@ -299,4 +299,4 @@ if __name__ == "__main__":
     SystemInfo(work_dir).write_system_info()
     
     pdf_path = compile_pdf(work_dir)
-    run(f"okular {pdf_path}")
+    subprocess.Popen(["xdg-open", pdf_path])

@@ -38,7 +38,7 @@ class FetchRunner(QThread):
                 DiskInfo(work_dir).write_disk_info()
 
         pdf_path: Path = compile_pdf(work_dir)
-        Popen(["okular", pdf_path])
+        Popen(["xdg-open", pdf_path])
 
 
 class TextBoxLogger(logging.Handler, QObject):

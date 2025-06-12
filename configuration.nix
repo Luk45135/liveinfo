@@ -69,7 +69,6 @@
     f3
     fio
     ## For pdf stuff
-    libsForQt5.okular
     typst
   ];
 
