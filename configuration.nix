@@ -22,6 +22,9 @@
     };
   };
 
+  i18n.defaultLocale = "de_CH.UTF-8";
+  time.timeZone = "Europe/Zurich";
+
   hardware.enableAllFirmware = true;
 
   networking = {
