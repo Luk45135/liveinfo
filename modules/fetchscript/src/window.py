@@ -5,7 +5,7 @@ from subprocess import Popen
 from PySide6.QtCore import QObject, QSize, QThread, Signal
 from PySide6.QtGui import QAction, QMovie, Qt
 from PySide6.QtWidgets import QMainWindow, QMessageBox, QVBoxLayout, QHBoxLayout, QPushButton, QCheckBox, QLabel, QPlainTextEdit, QWidget
-from fetch import Prepare, SystemInfo, DiskInfo, compile_pdf
+from .fetch import Prepare, SystemInfo, DiskInfo, compile_pdf
 
 
 class FetchRunner(QThread):

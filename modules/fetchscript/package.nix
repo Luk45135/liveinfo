@@ -27,18 +27,16 @@ pkgs.python3Packages.buildPythonApplication rec {
   installPhase = ''
     mkdir -p $out/lib/fetchscript
     cp src/*.py $out/lib/fetchscript
-    chmod +x $out/lib/fetchscript/main.py
 
-    wrapProgram $out/lib/fetchscript/main.py \
+    install -Dm644 assets/* -t $out/share/fetchscript
+    install -Dm644 ${computerbrockiImg} $out/share/fetchscript/computerbrocki.png
+
+    install -Dm755 src/main.py $out/bin/fetchscript
+
+    wrapProgram $out/bin/fetchscript \
+      --set PYTHONPATH $out/lib \
       --set FETCHSCRIPT_SHARE $out/share/fetchscript \
       --prefix PATH : /run/wrappers/bin:/run/current-system/sw/bin
-
-    mkdir -p $out/bin
-    ln -s $out/lib/fetchscript/main.py $out/bin/fetchscript
-
-    mkdir -p $out/share/fetchscript
-    cp assets/* $out/share/fetchscript
-    cp ${computerbrockiImg} $out/share/fetchscript/computerbrocki.png
 
     runHook postInstall
   '';

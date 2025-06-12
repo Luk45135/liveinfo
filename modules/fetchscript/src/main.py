@@ -1,11 +1,16 @@
+#!/usr/bin/env python3
 
 import sys
 from PySide6.QtWidgets import QApplication
-from window import Window
+from fetchscript.window import Window
 
-app = QApplication(sys.argv)
+def main():
+    app = QApplication(sys.argv)
+    
+    window = Window()
+    window.show()
+    
+    sys.exit(app.exec())
 
-window = Window()
-window.show()
-
-app.exec()
+if __name__ == "__main__":
+    main()
