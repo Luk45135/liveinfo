@@ -39,9 +39,8 @@ class Prepare():
 
     def backup_csvs(self):
 
-        for csv_name in ["system_info.csv", "disks.csv"]:
-            csv_file_path = Path(self.work_dir / csv_name)
-            if csv_file_path.exists() and csv_file_path.read_text() != "":
+        for csv_file_path in self.work_dir.glob("*.csv"):
+            if csv_file_path.read_text() != "":
                 logger.info(f"Backing up {csv_file_path.name}")
                 csv_file_path.rename(csv_file_path.with_suffix(csv_file_path.suffix + ".bak")) 
             csv_file_path.touch()
