@@ -30,16 +30,13 @@
     serviceConfig = {
       Type = "simple";
       ExecStart = pkgs.writeShellScript "enable-discovered-printers" ''
-        found=0
         for p in $(lpstat -p | awk '{print $2}'); do
           lpadmin -p "$p" -E
           cupsaccept "$p"
-          found=1
         done
-        [ "$found" -eq 1 ]
       '';
-      Restart = "on-failure";
-      RestartSec = 10;
+      Restart = "always";
+      RestartSec = 30;
     };
   };
 }
