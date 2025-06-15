@@ -165,7 +165,7 @@ class Disk:
 class DiskInfo():
     def __init__(self, work_dir: Path) -> None:
         # List that will become disks.csv
-        self.disks = []
+        self.disks_info = []
         self.work_dir = work_dir
     
 
@@ -263,15 +263,23 @@ class DiskInfo():
         return sorted(disks, key=lambda d: (-float(d.read_speed[:-4])))
 
     def get_disk_info(self):
-        for disk in self.get_disks():
-            self.disks.append(["Festplattentyp", disk.disk_type])
-            self.disks.append(["Modell", disk.model])
-            self.disks.append(["Grösse", disk.size_str])
-            self.disks.append(["Betriebsstunden", disk.power_on_hours])
-            self.disks.append(["Geschriebene Daten", disk.written_data])
-            self.disks.append(["Lesegeschwindigkeit", disk.read_speed])
-            # self.disks.append(["Schreibgeschwindigkeit", disk.write_speed])
-            self.disks.append(["SMART-Status", disk.smart_status])
+        disk_count = 1;
+        disks = self.get_disks()
+
+        for disk in disks:
+            if disk_count != 1:
+                logger.debug(self.disks_info[-1])
+                self.disks_info.append(["-------------------------------", "-------------------------------------------------------------------------------------------"])
+            disk_count += 1
+
+            self.disks_info.append(["Festplattentyp", disk.disk_type])
+            self.disks_info.append(["Modell", disk.model])
+            self.disks_info.append(["Grösse", disk.size_str])
+            self.disks_info.append(["Betriebsstunden", disk.power_on_hours])
+            self.disks_info.append(["Geschriebene Daten", disk.written_data])
+            self.disks_info.append(["Lesegeschwindigkeit", disk.read_speed])
+            # self.disks_info.append(["Schreibgeschwindigkeit", disk.write_speed])
+            self.disks_info.append(["SMART-Status", disk.smart_status])
 
 
     def write_disk_info(self):
@@ -280,7 +288,7 @@ class DiskInfo():
         
         with open(self.work_dir / "disks.csv", "w", newline="") as csvfile:
             csv_writer = writer(csvfile)
-            csv_writer.writerows(self.disks)
+            csv_writer.writerows(self.disks_info)
             logger.info("Written disk info")
 
 
