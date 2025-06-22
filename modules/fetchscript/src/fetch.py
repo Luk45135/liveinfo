@@ -18,6 +18,7 @@ logger = logging.getLogger("fetchscript_logger")
 
 
 def run(cmd: str, shell: bool = False) -> str:
+    logger.debug(f"Running: {cmd}")
     result = subprocess.run(
         cmd if shell else shlex.split(cmd),
         capture_output=True,
