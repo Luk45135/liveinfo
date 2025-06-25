@@ -34,7 +34,7 @@
       desktopManager.cinnamon.enable = true;
     };
   };
-  # This sets the default locale to swissgerman and typically in the form of language_territory.UTF-8
+  # This sets the default locale to swissgerman which is typically defined in the form of language_territory.UTF-8
   # For more info check the arch wiki: https://wiki.archlinux.org/title/Locale#Generating_locales
   i18n.defaultLocale = "de_CH.UTF-8";
   time.timeZone = "Europe/Zurich";
@@ -47,7 +47,7 @@
     networkmanager.enable = true;
     wireless.enable = false;
   };
-  # Sets up the user sets the default shell to zsh and adds it to some groups
+  # Sets up the user, sets the default shell to zsh and adds it to some groups
   # for sudo access and access to networkmanager
   users.users.nixos = {
     isNormalUser = true;
@@ -97,7 +97,7 @@
     typst
   ];
 
-  # Allow for non-opensource software to be installed
+  # Allow for non-opensource software to be installed like furmark
   nixpkgs.config.allowUnfree = true;
   
   # Install some usefull and needed fonts also sets a nice terminal font
