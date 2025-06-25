@@ -25,8 +25,7 @@ pkgs.python3Packages.buildPythonApplication rec {
   ];
 
   installPhase = ''
-    mkdir -p $out/lib/fetchscript
-    cp src/*.py $out/lib/fetchscript
+    install -Dm755 src/* -t $out/lib/fetchscript
 
     install -Dm644 assets/* -t $out/share/fetchscript
     install -Dm644 ${computerbrockiImg} $out/share/fetchscript/computerbrocki.png
