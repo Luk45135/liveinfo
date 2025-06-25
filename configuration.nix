@@ -1,9 +1,16 @@
+# This file defines the bulk of the configuration of the live OS
+# Documentation for the options used here can be found at: https://search.nixos.org/options?
 {pkgs, ...}: {
+  # This imports more configuration file that were split for organizing reasons
   imports = [
     ./modules/fetch.nix
     ./modules/printing.nix
   ];
 
+  # This is the only option not found at the above mentioned site.
+  # This option defines what compression algorithm is used for building the iso and speeds up build times by a huge factor
+  # This was taken from: https://wiki.nixos.org/wiki/Creating_a_NixOS_live_CD#Building_faster
+  # This specific compression algorithm was chosen for it's balance between build-speed and filesize
   isoImage.squashfsCompression = "gzip -Xcompression-level 1";
 
   services = {
@@ -47,6 +54,8 @@
     syntaxHighlighting.enable = true;
   };
 
+  # This is where additional packages/programs are defined
+  # Package names can be found at: https://search.nixos.org/packages?
   environment.systemPackages = with pkgs; [
     firefox
     snapshot
