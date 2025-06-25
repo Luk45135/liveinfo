@@ -5,7 +5,7 @@
 # and here which has additional info for this specific use case: https://wiki.nixos.org/wiki/Creating_a_NixOS_live_CD
 {
   description = "Minimal NixOS installation media";
-  # This defines which release stream (channel branch) is used 25.05 is the latest stable channel
+  # This defines which release stream (channel branch) is used, 25.05 is the latest stable channel
   # More on the different channels can be read here: https://wiki.nixos.org/wiki/Channel_branches
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
   outputs = { self, nixpkgs }: {
