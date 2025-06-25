@@ -49,6 +49,7 @@
 
   environment.systemPackages = with pkgs; [
     firefox
+    snapshot
 
     # Tools for reading out systeminfo
     pciutils
