@@ -9,9 +9,9 @@
   # More on the different channels can be read here: https://wiki.nixos.org/wiki/Channel_branches
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
   outputs = { self, nixpkgs }: {
-    packages.x86_64-linux.default = self.nixosConfigurations.exampleIso.config.system.build.isoImage;
+    packages.x86_64-linux.default = self.nixosConfigurations.bootableIso.config.system.build.isoImage;
     nixosConfigurations = {
-      exampleIso = nixpkgs.lib.nixosSystem {
+      bootableIso = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           ({ pkgs, modulesPath, ... }: {
