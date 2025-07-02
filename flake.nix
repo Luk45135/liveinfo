@@ -9,10 +9,6 @@
   # More on the different channels can be read here: https://wiki.nixos.org/wiki/Channel_branches
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
   outputs = { self, nixpkgs }: {
-    # This creates a "package" that build the bootableIso
-    packages.x86_64-linux.default = self.nixosConfigurations.bootableIso.config.system.build.isoImage;
-    # This creates a qemu VM that boots the NixOS configuration
-    packages.x86_64-linux.testVm = self.nixosConfigurations.bootableIso.config.system.build.vm;
     # This defines the NixOS configuration. imports configuration.nix
     nixosConfigurations = {
       bootableIso = nixpkgs.lib.nixosSystem {
@@ -29,6 +25,12 @@
           })
         ];
       };
+    };
+    packages.x86_64-linux = {
+      # This creates a "package" that builds the bootableIso
+      deafult = self.nixosConfigurations.bootableIso.config.system.build.isoImage;
+      # This creates a qemu VM that boots the NixOS configuration
+      testVm = self.nixosConfigurations.bootableIso.config.system.build.vm;
     };
     # This defines the devshell a shell that contains all the dependencies needed for developing this project
     # To use it run `nix develop` or `nix develop -c zsh` if you want to use zsh anywhere in the project
