@@ -1,6 +1,5 @@
-/result
+**/result
 /Documents
 /modules/*.csv
 /modules/*.pdf
-modules/fetchscript/result
 modules/fetchscript/src/__pycache__
