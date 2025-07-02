@@ -9,8 +9,11 @@
   # More on the different channels can be read here: https://wiki.nixos.org/wiki/Channel_branches
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
   outputs = { self, nixpkgs }: {
+    # This creates a "package" that build the bootableIso
     packages.x86_64-linux.default = self.nixosConfigurations.bootableIso.config.system.build.isoImage;
+    # This creates a qemu VM that boots the NixOS configuration
     packages.x86_64-linux.testVm = self.nixosConfigurations.bootableIso.config.system.build.vm;
+    # This defines the NixOS configuration. imports configuration.nix
     nixosConfigurations = {
       bootableIso = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
