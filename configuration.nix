@@ -1,6 +1,10 @@
 # This file defines the bulk of the configuration of the live OS
 # Documentation for the options used here can be found at: https://search.nixos.org/options?
-{pkgs, ...}: {
+{pkgs, ...}: 
+let
+  f3-qt = pkgs.callPackage ./modules/f3qt.nix {};
+in
+{
   # This imports more configuration files that were split up to organize
   imports = [
     ./modules/fetch.nix
@@ -81,6 +85,7 @@
     # Other useful tools
     gnome-disk-utility
     gparted
+    f3-qt
 
     # Needed for script
     # python3
