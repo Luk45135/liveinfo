@@ -3,3 +3,4 @@
 /modules/*.csv
 /modules/*.pdf
 modules/fetchscript/src/__pycache__
+nixos.qcow2
