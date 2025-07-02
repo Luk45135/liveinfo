@@ -10,6 +10,7 @@
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
   outputs = { self, nixpkgs }: {
     packages.x86_64-linux.default = self.nixosConfigurations.bootableIso.config.system.build.isoImage;
+    packages.x86_64-linux.testVm = self.nixosConfigurations.bootableIso.config.system.build.vm;
     nixosConfigurations = {
       bootableIso = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
