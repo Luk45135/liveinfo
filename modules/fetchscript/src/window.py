@@ -161,7 +161,7 @@ class Window(QMainWindow):
         Popen(["xdg-open", Prepare().work_dir])
 
     def start_fetching(self):
-        # Repace button with spinner
+        # Replace button with spinner
         self.start_button.hide()
         self.spinner.show()
         self.spinner_movie.start()
