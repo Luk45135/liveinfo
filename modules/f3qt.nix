@@ -1,9 +1,11 @@
+# This is the package definition of F3-Qt
+# Documentation for packaging Qt apps: https://nixos.org/manual/nixpkgs/stable/#sec-language-qt
 { pkgs ? import <nixpkgs> {} }:
 
 pkgs.stdenv.mkDerivation rec {
   pname = "f3-qt";
   version = "git";
-
+  # The latest git revision is used because the latest tagged release doesn't have a .desktop file
   src = pkgs.fetchFromGitHub {
     owner = "zwpwjwtz";
     repo = pname;
