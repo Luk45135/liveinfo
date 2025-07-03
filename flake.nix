@@ -28,7 +28,7 @@
     };
     packages.x86_64-linux = {
       # This creates a "package" that builds the bootableIso
-      deafult = self.nixosConfigurations.bootableIso.config.system.build.isoImage;
+      default = self.nixosConfigurations.bootableIso.config.system.build.isoImage;
       # This creates a qemu VM that boots the NixOS configuration
       testVm = self.nixosConfigurations.bootableIso.config.system.build.vm;
     };
