@@ -26,7 +26,7 @@ In a shell with nix installed, navigate to the extracted liveinfo directory and 
 
 `nix run nixpkgs#git pull` and then `nix build .`
 
-or you can just repeat the [Build](#Build) process
+or you can just repeat the [Build](#build) process
 
 # Test
 
