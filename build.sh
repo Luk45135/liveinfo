@@ -8,10 +8,24 @@ check_nix_installed() {
     if ! command -v nix &> /dev/null; then
         echo "❌ Nix is not installed. Installing it now..."
         sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon
-        echo
-        echo "✅ Nix installed. Please restart your shell or source the environment:"
-        # echo "   source ~/.nix-profile/etc/profile.d/nix.sh"
-        exit 1
+
+        echo "🔁 Sourcing nix profile to activate environment..."
+        # Source profile to enable nix in the current shell
+        if [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
+            # shellcheck source=/dev/null
+            . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+        else
+            echo "⚠️ Could not find nix.sh to source. Please restart your shell."
+            exit 1
+        fi
+
+        # Confirm nix is now available
+        if ! command -v nix &> /dev/null; then
+            echo "❌ Nix is still not available after sourcing. Aborting."
+            exit 1
+        fi
+
+        echo "✅ Nix installed and loaded in current shell."
     fi
 }
 
