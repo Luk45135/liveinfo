@@ -11,7 +11,7 @@
   outputs = { self, nixpkgs }: {
     # This defines the NixOS configuration. imports configuration.nix
     nixosConfigurations = {
-      bootableIso = nixpkgs.lib.nixosSystem {
+      liveinfo = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           ({ pkgs, modulesPath, ... }: {
@@ -27,10 +27,10 @@
       };
     };
     packages.x86_64-linux = {
-      # This creates a "package" that builds the bootableIso
-      default = self.nixosConfigurations.bootableIso.config.system.build.isoImage;
+      # This creates a "package" that builds the liveinfo configuration into an ISO
+      default = self.nixosConfigurations.liveinfo.config.system.build.isoImage;
       # This creates a qemu VM that boots the NixOS configuration
-      testVm = self.nixosConfigurations.bootableIso.config.system.build.vm;
+      testVm = self.nixosConfigurations.liveinfo.config.system.build.vm;
     };
     # This defines the devshell a shell that contains all the dependencies needed for developing this project
     # To use it run `nix develop` or `nix develop -c zsh` if you want to use zsh anywhere in the project
