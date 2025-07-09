@@ -12,7 +12,7 @@ After building you will find the ISO in `./result/iso/nixos-XX.XX.XXXXXXXX.xxxxx
 
 # Usage
 
-Flash the ISO onto a USD drive that is at least 8GB in size with a tool like Fedora Media Writer or Popsicle.
+Flash the ISO onto a USB drive that is at least 8GB in size with a tool like Fedora Media Writer or Popsicle.
 
 If you are in a shell with nix you can run it with `nix run nixpkgs#mediawriter` or you can create a shell with a program like this:
 
