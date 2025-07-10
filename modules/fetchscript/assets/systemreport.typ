@@ -14,7 +14,7 @@
       columns: (2fr, 1fr),
       gutter: 1em,
         align(left)[
-          #image("computerbrocki.png", width: 60%)
+          #image("logo.png", width: 60%)
         ],
         align(left)[
           #text("

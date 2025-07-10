@@ -6,7 +6,7 @@
 # This downloads the logo visible in the resulting PDF
 let
   # Fetch the image once, Nix will cache this
-  computerbrockiImg = pkgs.fetchurl {
+  logo = pkgs.fetchurl {
     url = "https://www.michael-nydegger.ch/computerbrocki.ch_transparent.png";
     hash = "sha256-6LuXzzMxGC74YtGZYVEFpMnTC+a+umuUUpjaBX5dca0=";
   };
@@ -36,7 +36,7 @@ pkgs.python3Packages.buildPythonApplication rec {
     install -Dm755 src/* -t $out/lib/fetchscript
 
     install -Dm644 assets/* -t $out/share/fetchscript
-    install -Dm644 ${computerbrockiImg} $out/share/fetchscript/computerbrocki.png
+    install -Dm644 ${logo} $out/share/fetchscript/logo.png
 
     install -Dm755 src/main.py $out/bin/fetchscript
 

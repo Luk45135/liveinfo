@@ -50,7 +50,7 @@ class Prepare():
 
         self.backup_csvs()
 
-        for asset in ["computerbrocki.png", "systemreport.typ"]: # Make sure needed assets are in working directory
+        for asset in ["logo.png", "systemreport.typ"]: # Make sure needed assets are in working directory
             target = self.work_dir / asset
             asset_path = Path(self.asset_dir / asset)
             if not target.exists() or not cmp(asset_path, target, shallow=False):
