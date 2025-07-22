@@ -60,3 +60,29 @@ In a shell with nix installed, navigate to the extracted liveinfo directory.
 
 Running `nix run .#testVm` will temporarily install [QEMU](https://www.qemu.org/) and directly run the liveiso NixOS configuration in a Virtual Machine.
 
+## Change Logo and Address
+
+### Logo
+
+Exchange the URL on line 10 in `modules/fetchscript/package.nix` with a URL of your logo.
+
+Replace the hash in the line below so that it reads `hash = pkgs.lib.fakeHash;`.
+
+Then try to build the project again with `nix build .`.
+
+This will fail, but in the error it will give you the correct hash to replace the fake hash with.
+
+The error looks something like this:
+
+```
+error: hash mismatch in fixed-output derivation '/nix/store/snaps3fj48bsiajmibqhcynpfamnb1cb-computerbrocki.ch_transparent.png.drv':
+         specified: sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+            got:    sha256-6LuXzzMxGC74YtGZYVEFpMnTC+a+umuUUpjaBX5dca0
+```
+
+Replace the fake hash with the hash that it shows after "got: " and you're done.
+
+### Address
+
+You can exchange lines 21-26 in `modules/fetchscript/assets/systemreport.typ` for your address and any more information that could reasonable fit in that space.
+
