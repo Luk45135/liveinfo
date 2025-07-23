@@ -64,7 +64,7 @@ Running `nix run .#testVm` will temporarily install [QEMU](https://www.qemu.org/
 
 ### Logo
 
-Exchange the URL on line 10 in `modules/fetchscript/package.nix` with a URL of your logo.
+Exchange the URL on line 10 in `modules/fetchscript/package.nix` with a URL to your logo.
 
 Replace the hash in the line below so that it reads `hash = pkgs.lib.fakeHash;`.
 
@@ -80,7 +80,7 @@ error: hash mismatch in fixed-output derivation '/nix/store/snaps3fj48bsiajmibqh
             got:    sha256-6LuXzzMxGC74YtGZYVEFpMnTC+a+umuUUpjaBX5dca0
 ```
 
-Replace the fake hash with the hash that it shows after "got: " and you're done.
+Replace the fake hash with the hash that it shows after "got: " (don't forget the "" before and after the hash) and you're done.
 
 ### Address
 
