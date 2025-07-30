@@ -9,12 +9,12 @@ pkgs.stdenv.mkDerivation rec {
   src = pkgs.fetchFromGitHub {
     owner = "zwpwjwtz";
     repo = pname;
-    rev = "511093975f8605d17a53b29d9861798f28f63ef0";
-    hash = "sha256-Bw7bGddzS4RRvSU9umu6L7drT41qqcpTWXbTIBsCyy0";
+    rev = "c8ee27be78d6f3697d1ffe1f9c8fbf0950118831";
+    hash = "sha256-1xxl8X2ebk+JU1sgI0bYxbHvoxKHEhaR8KmcY7Vie54";
   };
 
-  nativeBuildInputs = with pkgs.libsForQt5; [ qmake wrapQtAppsHook ];
-  buildInputs = [ pkgs.libsForQt5.qt5.full ];
+  nativeBuildInputs = with pkgs.qt6Packages; [ qmake wrapQtAppsHook ];
+  buildInputs = [ pkgs.qt6Packages.full ];
 
   dontUseCmakeConfigure = true;
   enableParallelBuilding = true;
