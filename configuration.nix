@@ -80,6 +80,8 @@ in
     # Other useful tools
     gnome-disk-utility
     nwipe
+    hdparm
+    nvme-cli
     f3-qt
 
     # Needed for script
