@@ -55,18 +55,13 @@ in
   # for sudo access and access to networkmanager
   users.users.nixos = {
     isNormalUser = true;
-    shell = pkgs.zsh;
+    shell = pkgs.fish;
     extraGroups = [
       "wheel"
       "networkmanager"
     ];
   };
-  # Configure some sane defaults for the zsh shell
-  programs.zsh = {
-    enable = true;
-    autosuggestions.enable = true;
-    syntaxHighlighting.enable = true;
-  };
+  programs.fish.enable = true;
 
   # This is where additional packages/programs are defined
   # Package names can be found at: https://search.nixos.org/packages?
