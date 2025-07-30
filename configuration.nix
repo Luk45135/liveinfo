@@ -84,7 +84,7 @@ in
 
     # Other useful tools
     gnome-disk-utility
-    gparted
+    nwipe
     f3-qt
 
     # Needed for script
