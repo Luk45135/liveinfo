@@ -14,7 +14,7 @@ pkgs.stdenv.mkDerivation rec {
   };
 
   nativeBuildInputs = with pkgs.qt6Packages; [ qmake wrapQtAppsHook ];
-  buildInputs = [ pkgs.qt6Packages.full ];
+  buildInputs = [ pkgs.qt6Packages.qtbase ];
 
   dontUseCmakeConfigure = true;
   enableParallelBuilding = true;
