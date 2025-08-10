@@ -1,6 +1,6 @@
 # This file defines the bulk of the configuration of the live OS
 # Documentation for the options used here can be found at: https://search.nixos.org/options?
-{pkgs, ...}: 
+{pkgs, lib, ...}: 
 let
   f3-qt = pkgs.callPackage ./modules/f3qt.nix {};
 in
@@ -54,6 +54,11 @@ in
   # Sets up the user, sets the default shell to zsh and adds it to some groups
   # for sudo access and access to networkmanager
   users.users.nixos = {
+    # Set the password of the nixos user to 1234
+    initialPassword = "1234";
+    # Force the initialHashedPassword value to be null
+    # because it is set to "" in the installation cd module
+    initialHashedPassword = lib.mkForce null;
     isNormalUser = true;
     shell = pkgs.fish;
     extraGroups = [
