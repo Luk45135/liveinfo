@@ -73,6 +73,7 @@ in
   environment.systemPackages = with pkgs; [
     firefox
     snapshot
+    audacity
 
     # Tools for reading out systeminfo
     pciutils
