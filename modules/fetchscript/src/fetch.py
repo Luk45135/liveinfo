@@ -34,7 +34,7 @@ def run(cmd: str, shell: bool = False) -> str:
 class Prepare():
     def __init__(self) -> None:
         self.asset_dir = Path(os.getenv("FETCHSCRIPT_SHARE", "/run/current-system/sw/share/fetchscript"))
-        self.work_dir = Path.home() / "Documents" / "fetchscript"
+        self.work_dir = Path.home() / "Dokumente" / "fetchscript"
         self.work_dir.mkdir(parents=True, exist_ok=True)
 
 
