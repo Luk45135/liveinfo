@@ -155,7 +155,7 @@ class Window(QMainWindow):
         help_menu.addActions(help_menu_actions)
 
     def show_about_dialog(self):
-        QMessageBox.about(self, f"Über {self.application_name}", f"{self.application_name}\nVersion {self.version}\nErstellt von Lukas Dorji")
+        QMessageBox.about(self, f"Über {self.application_name}", f"{self.application_name}\nhttps://github.com/Luk45135/liveinfo\nVersion {self.version}\nErstellt von Lukas Dorji")
 
     def open_folder(self):
         Popen(["xdg-open", Prepare().work_dir])
