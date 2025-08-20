@@ -10,6 +10,7 @@ from csv import writer
 import json
 from dataclasses import dataclass
 from dmidecode import DMIParse
+from re import search
 
 
 # Setup logger
@@ -156,6 +157,7 @@ class SystemInfo():
 class Disk:
     disk_type: str # SSD / HDD
     size_str: str # 931.5G or 1.00TB depending on if f3 is used
+    useable_size_str: str
     model: str
     power_on_hours: str
     written_data: str
@@ -203,7 +205,10 @@ class DiskInfo():
     
             # size_str = device.get("size") # for testing
             logger.info(f"Verifying real disk size of {path}")
-            size_str = run(f"sudo f3probe {path} | awk -F: '/Module/ {{gsub(/^ +| +$/, \"\", $2); split($2, a, \" \"); print a[1], a[2]}}'", shell=True)
+            # size_str = run(f"sudo f3probe {path} | awk -F: '/Module/ {{gsub(/^ +| +$/, \"\", $2); split($2, a, \" \"); print a[1], a[2]}}'", shell=True)
+            f3probe_output = run(f"sudo f3probe {path}")
+            size_str = search(r"Module: (.+) \(.*\)", f3probe_output).group(1)
+            useable_size_str = search(r"\* size: (.+) \(.*\)", f3probe_output).group(1)
     
             power_on_hours = str(smartctl_json.get("power_on_time", {}).get("hours")) + "h" # This is the same on nvme ssd, sata ssd and sata hdd
     
@@ -253,6 +258,7 @@ class DiskInfo():
             disks.append(Disk(
                 disk_type = disk_type,
                 size_str = size_str,
+                useable_size_str = useable_size_str,
                 model = device.get("model", "Unknown"),
                 power_on_hours = power_on_hours,
                 written_data = written_data,
@@ -275,7 +281,8 @@ class DiskInfo():
 
             self.disks_info.append(["Festplattentyp", disk.disk_type])
             self.disks_info.append(["Modell", disk.model])
-            self.disks_info.append(["Grösse", disk.size_str])
+            self.disks_info.append(["Gerundete Standardgrösse", disk.size_str])
+            self.disks_info.append(["Benutzbare Grösse (Kurztest)", disk.useable_size_str])
             self.disks_info.append(["Betriebsstunden", disk.power_on_hours])
             self.disks_info.append(["Geschriebene Daten", disk.written_data])
             self.disks_info.append(["Lesegeschwindigkeit", disk.read_speed])
