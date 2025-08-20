@@ -27,7 +27,16 @@
         ]
     )
   },
-  numbering: "1 / 1"
+  // numbering: "1 / 1",
+  footer: context [
+    #align(center)[
+      #counter(page).display(
+        "1 / 1",
+        both: true
+      )
+    ]
+    #align(right)[Version: #sys.inputs.version_number]
+  ]
 )
 
 #show heading: set text(blue, 26pt)
