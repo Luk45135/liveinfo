@@ -14,7 +14,7 @@ in
 pkgs.python3Packages.buildPythonApplication rec {
   # Basic program info like name and version
   pname = "fetchscript";
-  version = "0.3.3";
+  version = "0.3.4";
   format = "other"; # other because this doesnt use a pyproject.toml or setup.py for installation
 
   src = ./.;

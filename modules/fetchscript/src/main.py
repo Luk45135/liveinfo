@@ -9,7 +9,7 @@ from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
 from fetchscript.window import Window
 
-version_number = "0.3.3"
+version_number = "0.3.4"
 
 def main():
     # This creates the application for the Qt GUI
