@@ -57,9 +57,10 @@ class TextBoxLogger(logging.Handler, QObject):
 
 class Window(QMainWindow):
     def __init__(self):
+        from .main import version_number
         super().__init__()
         self.application_name = "SystemReport"
-        self.version = "0.3.3"
+        self.version = version_number
         self.setWindowTitle(self.application_name)
         self.resize(960, 540)
 

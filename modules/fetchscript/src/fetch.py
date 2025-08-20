@@ -301,6 +301,7 @@ class DiskInfo():
 
 
 def compile_pdf(work_dir: Path) -> Path:
+    from .main import version_number
     logger.info("Compiling Document")
     run(f"typst compile {work_dir}/systemreport.typ {work_dir}/systemreport.pdf")
     return work_dir / "systemreport.pdf"
