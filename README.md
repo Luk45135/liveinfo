@@ -31,6 +31,9 @@ If you don't already have a tool to Flash a USB you can temporarily install/run 
 	- This will directly run the app.
 - `nix shell nixpkpgs#popsicle`
 	- This will give you a shell that has the app installed which you can then run through the terminal like this: `popsicle-gtk`
+- `nix shell nixpkgs#caligula`
+    - Caligula is a lightweight TUI disk imaging tool for when the other options don't work, or when you dont have a grphical environment.
+    - Run it like this: `caligula burn result/iso/nixos-XX.XX.XXXXXXXX.xxxxxxx-x86_64-linux.iso`(use tab-complete for the iso name).
 
 ## Boot
 
