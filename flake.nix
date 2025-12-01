@@ -48,7 +48,7 @@
         ## For infofetching
         fastfetch
         dmidecode
-        glxinfo
+        mesa-demos
         smartmontools
         clinfo
         f3
