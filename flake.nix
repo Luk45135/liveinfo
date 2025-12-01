@@ -5,9 +5,9 @@
 # and here which has additional info for this specific use case: https://wiki.nixos.org/wiki/Creating_a_NixOS_live_CD
 {
   description = "Minimal NixOS installation media";
-  # This defines which release stream (channel branch) is used, 25.05 is the latest stable channel
+  # This defines which release stream (channel branch) is used, 25.11 is the latest stable channel
   # More on the different channels can be read here: https://wiki.nixos.org/wiki/Channel_branches
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
   outputs = { self, nixpkgs }: {
     # This defines the NixOS configuration. imports configuration.nix
     nixosConfigurations = {
@@ -17,7 +17,7 @@
           ({ pkgs, modulesPath, ... }: {
             imports = [ 
               # This defines everything we need for a live environment
-              # and is defined here: https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix
+              # and is defined here: https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix
               (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
               # Here we import the custom config
               ./configuration.nix
